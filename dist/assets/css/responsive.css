@@ -1,0 +1,31 @@
+/* Extra large desktops (1440px and up) */
+@media (min-width: 1700px) {}
+
+/* Large desktops (1200px to 1439px) */
+@media (min-width: 1200px) and (max-width: 1439px) {}
+
+/* Medium desktops / laptops (992px to 1199px) */
+@media (min-width: 992px) and (max-width: 1199px) {}
+
+/* Tablets (768px to 991px) */
+@media (min-width: 768px) and (max-width: 991px) {}
+
+/* Large phones (576px to 767px) */
+@media(max-width: 767px) {
+    .sidebar {
+        position: absolute;
+        left: -250px;
+        transition: left 0.3s ease;
+    }
+
+    .sidebar.active {
+        left: 0;
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+}
+
+/* Extra small devices (below 576px) */
+@media (max-width: 575px) {}
