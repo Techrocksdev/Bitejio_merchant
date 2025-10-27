@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useLocation } from "react-router-dom";
 import { RotatingLines } from "react-loader-spinner";
@@ -9,6 +9,7 @@ function ResetPassword() {
   const {
     register,
     handleSubmit,
+    trigger,
     formState: { errors },
     watch,
   } = useForm({ mode: "onChange" });
@@ -21,10 +22,17 @@ function ResetPassword() {
   const queryParams = new URLSearchParams(location.search);
   const encodedEmail = queryParams.get("email");
   const email = encodedEmail ? atob(encodedEmail) : null;
+  const newPasswordValue = watch("newPassword");
+  const confirmPasswordValue = watch("confirmPassword");
 
-  // eslint-disable-next-line no-unused-vars
+  useEffect(() => {
+    if (confirmPasswordValue && newPasswordValue) {
+      trigger("confirmPassword");
+    }
+  }, [newPasswordValue, confirmPasswordValue, trigger]);
+
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
-  // eslint-disable-next-line no-unused-vars
+
   const toggleConfirmPasswordVisibility = () =>
     setShowConfirmPassword(!showConfirmPassword);
 
@@ -74,17 +82,12 @@ function ResetPassword() {
                   },
                 })}
               />
-              {/* <span
-                className="position-absolute top-50 end-0 translate-middle-y me-2"
-                style={{ cursor: "pointer", zIndex: 10 }}
+              <i
+                className={`fa pass-eye ${
+                  showPassword ? "fa-eye-slash" : "fa-eye"
+                }`}
                 onClick={togglePasswordVisibility}
-              >
-                <img
-                  src="/assets/images/icons/eye-slash.svg"
-                  alt="Toggle password visibility"
-                  width="20"
-                />
-              </span> */}
+              ></i>
             </div>
             {errors.newPassword && (
               <p className="form-error">{errors.newPassword.message}</p>
@@ -106,17 +109,12 @@ function ResetPassword() {
                     value === watch("newPassword") || "Passwords do not match",
                 })}
               />
-              {/* <span
-                className="position-absolute top-50 end-0 translate-middle-y me-2"
-                style={{ cursor: "pointer", zIndex: 10 }}
+              <i
+                className={`fa pass-eye ${
+                  showConfirmPassword ? "fa-eye-slash" : "fa-eye"
+                }`}
                 onClick={toggleConfirmPasswordVisibility}
-              >
-                <img
-                  src="/assets/images/icons/eye-slash.svg"
-                  alt="Toggle confirm password visibility"
-                  width="20"
-                />
-              </span> */}
+              ></i>
             </div>
             {errors.confirmPassword && (
               <p className="form-error">{errors.confirmPassword.message}</p>

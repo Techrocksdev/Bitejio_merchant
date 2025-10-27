@@ -323,3 +323,38 @@ input[type="number"]::-webkit-inner-spin-button {
 .Toastify__close-button {
   top: 3px !important;
 }
+.pass-eye {
+  position: absolute;
+  right: 13px;
+  top: 13px;
+  cursor: pointer;
+}
+.comman-btn-main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.nav-link {
+  color: #e46a15 !important;
+}
+.btn:hover {
+  color: #e46a15;
+  border: 1px solid #e46a15;
+}
+.payment_head h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+.payment_head p {
+  font-size: 16px;
+  margin: 0;
+}
+.comman-btn-main.white {
+  color: #e46a15 !important;
+  border: 1px solid #e46a15 !important;
+  background-color: #fff !important;
+}
+.form-check-input {
+  cursor: pointer;
+}

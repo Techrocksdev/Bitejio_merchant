@@ -142,6 +142,7 @@ body {
   opacity: 0.8;
   color: var(--white);
   background-color: var(--main);
+  border: none;
 }
 
 .btn-comman {

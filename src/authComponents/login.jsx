@@ -88,32 +88,30 @@ function Login() {
             </div>
             <div className="mb-3">
               <label className="form-label">Password</label>
-              <input
-                type={showPassword ? "text" : "password"}
-                className={`form-control pe-5 ${
-                  errors.password ? "input-error" : ""
-                }`}
-                placeholder="Enter your password"
-                {...register("password", {
-                  required: "Password is required",
-                  pattern: {
-                    value:
-                      /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^])[A-Za-z\d@$!%*?&#^]{8,}$/,
-                    message:
-                      "Password must be 8+ characters with uppercase, number and special character",
-                  },
-                })}
-              />
-              {/* <img
-                      src={
-                        showPassword
-                          ? "/assets/images/icons/eye-slash.svg"
-                          : "/assets/images/icons/eye-slash.svg"
-                      }
-                      onClick={togglePasswordVisibility}
-                      className="position-absolute top-50 end-0 translate-middle-y me-2 cursor-pointer"
-                      alt="toggle password"
-                    /> */}
+              <div className="position-relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  className={`form-control pe-5 ${
+                    errors.password ? "input-error" : ""
+                  }`}
+                  placeholder="Enter your password"
+                  {...register("password", {
+                    required: "Password is required",
+                    pattern: {
+                      value:
+                        /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^])[A-Za-z\d@$!%*?&#^]{8,}$/,
+                      message:
+                        "Password must be 8+ characters with uppercase, number and special character",
+                    },
+                  })}
+                />
+                <i
+                  className={`fa pass-eye ${
+                    showPassword ? "fa-eye-slash" : "fa-eye"
+                  }`}
+                  onClick={togglePasswordVisibility}
+                ></i>
+              </div>
 
               {errors.password && (
                 <p className="form-error">{errors.password.message}</p>
