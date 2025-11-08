@@ -113,7 +113,7 @@ function App() {
                   element={<EditProduct />}
                 />
                 <Route
-                  path="/merchant/product-details"
+                  path="/merchant/product-details/:id"
                   element={<ProductDetails />}
                 />
                 <Route path="/merchant/orders" element={<Orders />} />

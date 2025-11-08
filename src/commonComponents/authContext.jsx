@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createContext, useContext, useState } from "react";
-// import { getMyProfile } from "../apiServices/home/homeHttpService";
+import { getMyProfile } from "../apiServices/home/homeHttpService";
 
 const AuthContext = createContext();
 
@@ -9,15 +9,15 @@ export const AuthProvider = ({ children }) => {
   const [isSidebarHidden, setIsSidebarHidden] = useState(false);
 
   // eslint-disable-next-line no-unused-vars
-  // const { data: profile, refetch } = useQuery({
-  //   queryKey: ["getProfile"],
-  //   queryFn: getMyProfile,
-  //   enabled: !!token,
-  //   onError: (error) => {
-  //     console.log(error);
-  //   },
-  //   select: (data) => data.results.user,
-  // });
+  const { data: profile, refetch } = useQuery({
+    queryKey: ["getProfile"],
+    queryFn: getMyProfile,
+    enabled: !!token,
+    onError: (error) => {
+      console.log(error);
+    },
+    select: (data) => data.results.user,
+  });
 
   const toggleSidebar = () => {
     setIsSidebarHidden((prev) => !prev);
@@ -26,8 +26,8 @@ export const AuthProvider = ({ children }) => {
   return (
     <AuthContext.Provider
       value={{
-        // profile,
-        // refetch,
+        profile,
+        refetch,
         toggleSidebar,
         isSidebarHidden,
       }}

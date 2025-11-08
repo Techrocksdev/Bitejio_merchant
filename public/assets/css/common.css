@@ -215,6 +215,7 @@ body {
 
 .text-main {
   color: var(--main) !important;
+  font-weight: 500 !important;
 }
 
 .form-label {

@@ -181,6 +181,7 @@
   flex-direction: column;
   align-items: center;
   gap: 6px;
+  cursor: pointer;
 }
 
 .upload-content i {
@@ -357,4 +358,61 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 .form-check-input {
   cursor: pointer;
+}
+.multi .react-select__control {
+  box-shadow: unset;
+  height: 50px !important;
+  background-color: var(--border-light);
+  border: none;
+}
+.img-wrap i {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  font-size: 16px;
+  background: #e46a15;
+  border-radius: 50%;
+  padding: 3px 5px;
+  color: #fff;
+  font-weight: bold;
+  border: 1px solid;
+  cursor: pointer;
+  z-index: 999;
+}
+.datafilter {
+  display: flex;
+  align-items: center;
+}
+
+.datafilter select {
+  border: 1px solid #a2a1a833;
+  width: 76px;
+  height: 46px !important;
+  border-radius: 10px;
+  box-shadow: unset !important;
+}
+.datafilter span {
+  font-size: 14px;
+  color: #ababab;
+  display: block;
+  margin-inline-end: 16px;
+}
+.page-link,
+.page-link:hover {
+  border: 0;
+  height: 36px;
+  width: 35px;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1a1a1a;
+  background-color: #fff;
+}
+.active > .page-link,
+.page-link.active {
+  border: 1px solid #e46a15;
+  background: #e46a15;
+  color: #fff;
 }

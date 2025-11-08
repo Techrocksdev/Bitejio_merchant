@@ -58,49 +58,6 @@ export async function resetPassword(formData) {
     showGlobalAlert(error.message, "error");
   }
 }
-
-export async function addMerchant(formData) {
-  try {
-    const { data } = await webHttpService.post(
-      `${import.meta.env.VITE_APIENDPOINT}/user/addMerchant`,
-      formData
-    );
-    console.log(data);
-
-    return data;
-  } catch (error) {
-    showGlobalAlert(error.message, "error");
-  }
-}
-
-export async function changePassword(formData) {
-  try {
-    const { data } = await webHttpService.post(
-      `${import.meta.env.VITE_APIENDPOINT}/user/changePassword`,
-      formData
-    );
-    console.log(data);
-
-    return data;
-  } catch (error) {
-    showGlobalAlert(error.message, "error");
-  }
-}
-
-export async function editUserProfile(formData) {
-  try {
-    const { data } = await webHttpService.post(
-      `${import.meta.env.VITE_APIENDPOINT}/user/editUserProfile`,
-      formData
-    );
-    console.log(data);
-
-    return data;
-  } catch (error) {
-    showGlobalAlert(error.message, "error");
-  }
-}
-
 export async function getMyProfile() {
   try {
     const { data } = await webHttpService.get(
@@ -113,51 +70,9 @@ export async function getMyProfile() {
     showGlobalAlert(error.message, "error");
   }
 }
-
-export async function getDashboardCounts() {
-  try {
-    const { data } = await webHttpService.post(
-      `${import.meta.env.VITE_APIENDPOINT}/analytics/getDashboardCounts`
-    );
-    console.log(data);
-
-    return data;
-  } catch (error) {
-    showGlobalAlert(error.message, "error");
-  }
-}
-
-export async function getContent(formData) {
-  try {
-    const { data } = await webHttpService.post(
-      `${import.meta.env.VITE_APIENDPOINT}/content/getContent`,
-      formData
-    );
-    console.log(data);
-
-    return data;
-  } catch (error) {
-    showGlobalAlert(error.message, "error");
-  }
-}
-
-export async function addCategory(formData) {
-  try {
-    const { data } = await webHttpService.post(
-      `${import.meta.env.VITE_APIENDPOINT}/products/addCategory`,
-      formData
-    );
-    console.log(data);
-
-    return data;
-  } catch (error) {
-    showGlobalAlert(error.message, "error");
-  }
-}
-
 export async function getCategory(formData) {
   try {
-    const { data } = await webHttpService.post(
+    const { data } = await webHttpService.patch(
       `${import.meta.env.VITE_APIENDPOINT}/products/getCategory`,
       formData
     );
@@ -168,38 +83,103 @@ export async function getCategory(formData) {
     showGlobalAlert(error.message, "error");
   }
 }
-
-export async function updateCategoryStatus(id) {
-  try {
-    const { data } = await webHttpService.get(
-      `${import.meta.env.VITE_APIENDPOINT}/products/updateCategoryStatus/${id}`
-    );
-    console.log(data);
-
-    return data;
-  } catch (error) {
-    showGlobalAlert(error.message, "error");
-  }
-}
-
-export async function viewCategory(id) {
-  try {
-    const { data } = await webHttpService.get(
-      `${import.meta.env.VITE_APIENDPOINT}/products/viewCategory/${id}`
-    );
-    console.log(data);
-
-    return data;
-  } catch (error) {
-    showGlobalAlert(error.message, "error");
-  }
-}
-
-export async function updateCategory(formData, id) {
+export async function addProduct(formData) {
   try {
     const { data } = await webHttpService.post(
-      `${import.meta.env.VITE_APIENDPOINT}/products/updateCategory/${id}`,
+      `${import.meta.env.VITE_APIENDPOINT}/products/addProduct`,
       formData
+    );
+    console.log(data);
+
+    return data;
+  } catch (error) {
+    showGlobalAlert(error.message, "error");
+  }
+}
+export async function getValues(formData) {
+  try {
+    const { data } = await webHttpService.patch(
+      `${import.meta.env.VITE_APIENDPOINT}/products/getValues`,
+      formData
+    );
+    console.log(data);
+
+    return data;
+  } catch (error) {
+    showGlobalAlert(error.message, "error");
+  }
+}
+export async function getAttributes(formData) {
+  try {
+    const { data } = await webHttpService.patch(
+      `${import.meta.env.VITE_APIENDPOINT}/products/getAttributes`,
+      formData
+    );
+    console.log(data);
+
+    return data;
+  } catch (error) {
+    showGlobalAlert(error.message, "error");
+  }
+}
+
+export async function createCombinations(formData) {
+  try {
+    const { data } = await webHttpService.post(
+      `${import.meta.env.VITE_APIENDPOINT}/products/createCombinations`,
+      formData
+    );
+    console.log(data);
+
+    return data;
+  } catch (error) {
+    showGlobalAlert(error.message, "error");
+  }
+}
+
+export async function getProduct(formData) {
+  try {
+    const { data } = await webHttpService.post(
+      `${import.meta.env.VITE_APIENDPOINT}/products/getProduct`,
+      formData
+    );
+    console.log(data);
+
+    return data;
+  } catch (error) {
+    showGlobalAlert(error.message, "error");
+  }
+}
+
+export async function updateProductStatus(id) {
+  try {
+    const { data } = await webHttpService.get(
+      `${import.meta.env.VITE_APIENDPOINT}/products/updateProductStatus/${id}`
+    );
+    console.log(data);
+
+    return data;
+  } catch (error) {
+    showGlobalAlert(error.message, "error");
+  }
+}
+
+export async function deleteProduct(id) {
+  try {
+    const { data } = await webHttpService.delete(
+      `${import.meta.env.VITE_APIENDPOINT}/products/deleteProduct/${id}`
+    );
+    console.log(data);
+
+    return data;
+  } catch (error) {
+    showGlobalAlert(error.message, "error");
+  }
+}
+export async function viewProduct(id) {
+  try {
+    const { data } = await webHttpService.get(
+      `${import.meta.env.VITE_APIENDPOINT}/products/viewProduct/${id}`
     );
     console.log(data);
 
