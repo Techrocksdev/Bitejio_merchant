@@ -7,6 +7,9 @@ import { useQuery } from "@tanstack/react-query";
 import { viewProduct } from "../apiServices/home/homeHttpService";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 function ProductDetails() {
   const { isSidebarHidden } = useUserAuth();
@@ -21,6 +24,72 @@ function ProductDetails() {
     },
     select: (data) => data.results.product[0],
   });
+
+  const SampleNextArrow = (props) => {
+    const { className, style, onClick } = props;
+    return (
+      <div
+        className={`${className} custom-arrow custom-next-arrow`}
+        style={{ ...style }}
+        onClick={onClick}
+      >
+        <i className="fa fa-chevron-right"></i>
+      </div>
+    );
+  };
+
+  const SamplePrevArrow = (props) => {
+    const { className, style, onClick } = props;
+    return (
+      <div
+        className={`${className} custom-arrow custom-prev-arrow`}
+        style={{ ...style }}
+        onClick={onClick}
+      >
+        <i className="fa fa-chevron-left"></i>
+      </div>
+    );
+  };
+
+  const sliderSettings = {
+    dots: false,
+    infinite: true,
+    speed: 500,
+    slidesToShow: Math.min(3, results?.images?.length || 1),
+    slidesToScroll: 1,
+    initialSlide: 0,
+    autoplay: true,
+    autoplaySpeed: 2000,
+    arrows: true,
+    nextArrow: <SampleNextArrow />,
+    prevArrow: <SamplePrevArrow />,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: Math.min(2, results?.images?.length || 1),
+          slidesToScroll: 1,
+          infinite: true,
+          dots: true,
+        },
+      },
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          initialSlide: 1,
+        },
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+    ],
+  };
 
   return (
     <>
@@ -53,15 +122,34 @@ function ProductDetails() {
               </div>
               <div className="card-body">
                 <div className="row">
-                  {/* <div className="col-md-2">
-                    <div className="p-2 rounded overflow-hidden border">
-                      <img
-                        src="../../assets/image/products/pizza.svg"
-                        className="object-fit-contain w-100 h-100"
-                        alt=""
-                      />
-                    </div>
-                  </div> */}
+                  <div className="col-md-12 mb-3">
+                    {results?.images && results.images.length > 0 ? (
+                      <div className="slider-container">
+                        <Slider {...sliderSettings}>
+                          {results.images.map((item, index) => (
+                            <div key={index} className="px-2">
+                              <img
+                                src={item}
+                                alt={`Product ${index + 1}`}
+                                className="img-fluid rounded"
+                                style={{
+                                  height: "300px",
+                                  width: "100%",
+                                  objectFit: "cover",
+                                }}
+                              />
+                            </div>
+                          ))}
+                        </Slider>
+                      </div>
+                    ) : isLoading ? (
+                      <Skeleton height={300} />
+                    ) : (
+                      <div className="text-center p-4 border rounded">
+                        <p className="text-muted">No images available</p>
+                      </div>
+                    )}
+                  </div>
                   <div className="col-md-12 my-2">
                     <div className="row g-3">
                       <div className="col-md-3">

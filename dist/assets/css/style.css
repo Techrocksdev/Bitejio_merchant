@@ -416,3 +416,19 @@ input[type="number"]::-webkit-inner-spin-button {
   background: #e46a15;
   color: #fff;
 }
+.slider-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.custom-arrow {
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e46a15 0%, #fecfef 100%) !important;
+  scale: 1.5;
+}
+
+.slick-prev {
+  left: -60px !important;
+}
+.slick-next {
+  right: -60px !important;
+}

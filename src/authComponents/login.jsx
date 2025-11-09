@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { userLogin } from "../apiServices/home/homeHttpService";
 import { showGlobalAlert } from "../commonComponents/useGlobalAlert";
 import { RotatingLines } from "react-loader-spinner";
+import { useUserAuth } from "../commonComponents/authContext";
 
 function Login() {
   const {
@@ -15,7 +16,7 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [loader, setLoader] = useState(false);
   const navigate = useNavigate();
-  // const { refetch } = useUserAuth();
+  const { refetch } = useUserAuth();
 
   useEffect(() => {
     if (
@@ -42,7 +43,7 @@ function Login() {
         localStorage.setItem("token-bit-merchant", response.results.token);
         showGlobalAlert(response.message, "success");
         navigate("/merchant/dashboard");
-        // refetch();
+        refetch();
       } else {
         showGlobalAlert(response.message, "error");
       }

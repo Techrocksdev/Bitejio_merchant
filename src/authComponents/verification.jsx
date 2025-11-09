@@ -5,6 +5,7 @@ import { RotatingLines } from "react-loader-spinner";
 import { showGlobalAlert } from "../commonComponents/useGlobalAlert";
 import { verifyOTP, forgotPassword } from "../apiServices/home/homeHttpService";
 import OTPTimer from "../commonComponents/OTPTimer";
+import { useUserAuth } from "../commonComponents/authContext";
 
 function Verification() {
   const {
@@ -18,7 +19,7 @@ function Verification() {
   const [loader, setLoader] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  // const { refetch } = useUserAuth();
+  const { refetch } = useUserAuth();
 
   const queryParams = new URLSearchParams(location.search);
   const encodedEmail = queryParams.get("email");
@@ -39,7 +40,7 @@ function Verification() {
       if (!response.error) {
         if (location?.state?.type) {
           localStorage.setItem("token-bit-merchant", response.results.token);
-          // refetch();
+          refetch();
         } else {
           navigate(`/reset-password?email=${btoa(email)}`);
         }
