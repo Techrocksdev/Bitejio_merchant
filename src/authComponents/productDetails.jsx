@@ -133,7 +133,7 @@ function ProductDetails() {
                                 alt={`Product ${index + 1}`}
                                 className="img-fluid rounded"
                                 style={{
-                                  height: "300px",
+                                  height: "250px",
                                   width: "100%",
                                   objectFit: "cover",
                                 }}
@@ -143,7 +143,7 @@ function ProductDetails() {
                         </Slider>
                       </div>
                     ) : isLoading ? (
-                      <Skeleton height={300} />
+                      <Skeleton height={250} />
                     ) : (
                       <div className="text-center p-4 border rounded">
                         <p className="text-muted">No images available</p>
