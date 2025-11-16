@@ -38,12 +38,6 @@ function Header() {
                 Settings
               </a>
             </li>
-            <li>
-              <a className="dropdown-item" href="#">
-                <i className="fa fa-sign-out me-2" />
-                Logout
-              </a>
-            </li>
           </ul>
         </div>
       </header>
