@@ -188,3 +188,15 @@ export async function viewProduct(id) {
     showGlobalAlert(error.message, "error");
   }
 }
+export async function getDashboardCounts() {
+  try {
+    const { data } = await webHttpService.get(
+      `${import.meta.env.VITE_APIENDPOINT}/analytics/getDashboardCounts`
+    );
+    console.log(data);
+
+    return data;
+  } catch (error) {
+    showGlobalAlert(error.message, "error");
+  }
+}
