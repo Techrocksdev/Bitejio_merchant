@@ -188,6 +188,12 @@ function ProductDetails() {
                         )}
                         <p />
                       </div>
+                      <div className="col-md-12">
+                        <h2 className="fs-5 fw-semibold m-0">Description</h2>
+                        <p className="fs-6 fw-normal text-main m-0"></p>
+                        {results?.description_en || <Skeleton />}
+                        <p />
+                      </div>
                     </div>
                   </div>
                 </div>

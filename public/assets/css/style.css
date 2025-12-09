@@ -432,3 +432,7 @@ input[type="number"]::-webkit-inner-spin-button {
 .slick-next {
   right: -60px !important;
 }
+textarea,
+#textarea {
+  height: 130px !important;
+}

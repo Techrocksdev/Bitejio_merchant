@@ -154,10 +154,21 @@ function AddProduct() {
       showGlobalAlert("Please upload at least one product image", "error");
       return;
     }
+    const invalidVariations = combination.filter(
+      (item) => !item.quantity || !item.price || !item.discountPrice
+    );
+
+    if (invalidVariations.length > 0) {
+      showGlobalAlert(
+        "Please fill all required fields for variations (quantity, price)",
+        "error"
+      );
+      return;
+    }
     setLoader(true);
     const formData = new FormData();
     formData.append("name_en", data.name_en);
-    formData.append("description_en", "");
+    formData.append("description_en", data.description_en);
     formData.append("categoryId", data.categoryId);
     formData.append("subCategoryId", data.subCategoryId);
     formData.append("type", data.type);
@@ -401,6 +412,25 @@ function AddProduct() {
                       </select>
                       {errors.type && (
                         <p className="form-error">{errors.type.message}</p>
+                      )}
+                    </div>
+                    <div className="col-md-12">
+                      <label className="form-label">Description</label>
+                      <textarea
+                        id="textarea"
+                        placeholder="Enter description"
+                        className={`form-control ${
+                          errors.description_en ? "input-error" : ""
+                        }`}
+                        {...register("description_en", {
+                          required: "Description is required",
+                        })}
+                        style={{ height: "130px!important" }}
+                      />
+                      {errors.description_en && (
+                        <p className="form-error">
+                          {errors.description_en.message}
+                        </p>
                       )}
                     </div>
                     <div className="col-12">
