@@ -211,7 +211,18 @@ function Dashboard() {
                               <td>{index + 1}</td>
                               <td>#{item.orderId}</td>
                               <td>{item.userId.firstName}</td>
-                              <td>2x Pizza, 1x Coke</td>
+                              <td>
+                                {item.products &&
+                                  item.products.map((product, index) => (
+                                    <span key={product._id || index}>
+                                      {product.quantity}x{" "}
+                                      {product.productId?.name_en}
+                                      {index < item.products.length - 1
+                                        ? ", "
+                                        : ""}
+                                    </span>
+                                  ))}
+                              </td>
                               <td>₹{item.amount}</td>
                               <td>
                                 <select
@@ -323,7 +334,14 @@ function Dashboard() {
                     <strong>Order ID:</strong> #{details?.orderId}
                   </p>
                   <p>
-                    <strong>Items:</strong> 2x Pizza, 1x Coke
+                    <strong>Items:</strong>{" "}
+                    {details?.products &&
+                      details?.products.map((product, index) => (
+                        <span key={product._id || index}>
+                          {product.quantity}x {product.productId?.name_en}
+                          {index < details?.products.length - 1 ? ", " : ""}
+                        </span>
+                      ))}
                   </p>
                   <p>
                     <strong>Total Amount:</strong> ₹{details?.amount}
