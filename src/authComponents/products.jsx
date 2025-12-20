@@ -172,7 +172,7 @@ function Products() {
                               <i className="fa fa-eye" />
                             </Link>
                             <Link
-                              to="/merchant/edit-product"
+                              to={`/merchant/edit-product/${item._id}`}
                               className="table-btn bg-main me-2"
                             >
                               <i className="fa fa-edit" />

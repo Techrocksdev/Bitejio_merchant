@@ -12,7 +12,7 @@ import ScrollToTop from "./commonComponents/scrollToTop";
 import ProtectedRoute from "./commonComponents/protectedRoutes";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+const EditProfile = lazy(() => import("./authComponents/editProfile"));
 const ProductDetails = lazy(() => import("./authComponents/productDetails"));
 const EditProduct = lazy(() => import("./authComponents/editProduct"));
 const AddProduct = lazy(() => import("./authComponents/addProduct"));
@@ -109,7 +109,7 @@ function App() {
                 <Route path="/merchant/products" element={<Products />} />
                 <Route path="/merchant/add-product" element={<AddProduct />} />
                 <Route
-                  path="/merchant/edit-product"
+                  path="/merchant/edit-product/:id"
                   element={<EditProduct />}
                 />
                 <Route
@@ -117,6 +117,7 @@ function App() {
                   element={<ProductDetails />}
                 />
                 <Route path="/merchant/orders" element={<Orders />} />
+                <Route path="/merchant/profile" element={<EditProfile />} />
               </Route>
 
               <Route path="/" element={<Navigate to="/login" replace />} />

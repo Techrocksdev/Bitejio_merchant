@@ -1,13 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import SideBar from "../commonComponents/sideBar";
 import Header from "../commonComponents/header";
 import { useUserAuth } from "../commonComponents/authContext";
 import { useQuery } from "@tanstack/react-query";
 import { getDashboardCounts } from "../apiServices/home/homeHttpService";
-
+import {
+  changeOrderStatus,
+  getOrders,
+} from "../apiServices/home/homeHttpService";
+import { showGlobalAlert } from "../commonComponents/useGlobalAlert";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import moment from "moment";
 function Dashboard() {
   const { isSidebarHidden } = useUserAuth();
+
+  const [details, setDetails] = useState({});
   const { data: count } = useQuery({
     queryKey: ["getDashboardCount"],
     queryFn: getDashboardCounts,
@@ -16,6 +25,50 @@ function Dashboard() {
     },
     select: (data) => data.results.data,
   });
+
+  const {
+    data: response,
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["ordersList"],
+    queryFn: async () => {
+      const formData = {
+        page: 1,
+        pageSize: 5,
+        search: "",
+        userId: "",
+        year: 0,
+        month: 0,
+        startDate: "",
+        endDate: "",
+      };
+      return getOrders(formData);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
+  const results = response?.results?.orders || [];
+
+  const changeOrderSta = async (id, status) => {
+    const formData = {
+      orderId: id,
+      status: status,
+    };
+    try {
+      const response = await changeOrderStatus(formData);
+      if (!response.error) {
+        refetch();
+      } else {
+        showGlobalAlert(response.message, "error");
+      }
+      // eslint-disable-next-line no-unused-vars
+    } catch (error) {
+      console.log("An error occurred");
+    }
+  };
   return (
     <>
       <div className="admin-wrapper d-flex">
@@ -111,198 +164,98 @@ function Dashboard() {
                     <table className="table table-hover align-middle">
                       <thead className="table-light">
                         <tr>
-                          <th>#</th>
+                          <th>S.No</th>
                           <th>Order ID</th>
                           <th>Customer</th>
-                          <th>Merchant</th>
                           <th>Items</th>
                           <th>Total</th>
                           <th>Status</th>
                           <th>Date</th>
+                          <th className="text-center">Actions</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {/* 10 Example Orders */}
-                        <tr>
-                          <td>1</td>
-                          <td>#ORD1001</td>
-                          <td>Aryan Saini</td>
-                          <td>Pizza Hut</td>
-                          <td>2x Pizza, 1x Coke</td>
-                          <td>₹550</td>
-                          <td>
-                            <select className="form-select form-select-sm status-dropdown">
-                              <option>Pending</option>
-                              <option selected>Preparing</option>
-                              <option>Out for Delivery</option>
-                              <option>Delivered</option>
-                              <option>Cancelled</option>
-                            </select>
-                          </td>
-                          <td>09 Sep 2025, 7:45 PM</td>
-                        </tr>
-                        <tr>
-                          <td>2</td>
-                          <td>#ORD1002</td>
-                          <td>Neha Verma</td>
-                          <td>KFC</td>
-                          <td>1x Zinger Burger, 1x Pepsi</td>
-                          <td>₹320</td>
-                          <td>
-                            <select className="form-select form-select-sm status-dropdown">
-                              <option>Pending</option>
-                              <option>Preparing</option>
-                              <option>Out for Delivery</option>
-                              <option selected>Delivered</option>
-                              <option>Cancelled</option>
-                            </select>
-                          </td>
-                          <td>09 Sep 2025, 8:10 PM</td>
-                        </tr>
-                        <tr>
-                          <td>3</td>
-                          <td>#ORD1003</td>
-                          <td>Rohit Mehra</td>
-                          <td>Domino's</td>
-                          <td>1x Farmhouse Pizza</td>
-                          <td>₹450</td>
-                          <td>
-                            <select className="form-select form-select-sm status-dropdown">
-                              <option selected>Pending</option>
-                              <option>Preparing</option>
-                              <option>Out for Delivery</option>
-                              <option>Delivered</option>
-                              <option>Cancelled</option>
-                            </select>
-                          </td>
-                          <td>09 Sep 2025, 8:30 PM</td>
-                        </tr>
-                        <tr>
-                          <td>4</td>
-                          <td>#ORD1004</td>
-                          <td>Simran Kaur</td>
-                          <td>McDonald's</td>
-                          <td>2x McAloo Tikki, 2x Coke</td>
-                          <td>₹280</td>
-                          <td>
-                            <select className="form-select form-select-sm status-dropdown">
-                              <option>Pending</option>
-                              <option selected>Preparing</option>
-                              <option>Out for Delivery</option>
-                              <option>Delivered</option>
-                              <option>Cancelled</option>
-                            </select>
-                          </td>
-                          <td>09 Sep 2025, 9:00 PM</td>
-                        </tr>
-                        <tr>
-                          <td>5</td>
-                          <td>#ORD1005</td>
-                          <td>Aman Gupta</td>
-                          <td>Burger King</td>
-                          <td>1x Whopper, Fries</td>
-                          <td>₹350</td>
-                          <td>
-                            <select className="form-select form-select-sm status-dropdown">
-                              <option>Pending</option>
-                              <option>Preparing</option>
-                              <option selected>Out for Delivery</option>
-                              <option>Delivered</option>
-                              <option>Cancelled</option>
-                            </select>
-                          </td>
-                          <td>09 Sep 2025, 9:15 PM</td>
-                        </tr>
-                        <tr>
-                          <td>6</td>
-                          <td>#ORD1006</td>
-                          <td>Pooja Sharma</td>
-                          <td>Subway</td>
-                          <td>1x Veggie Delight Sub</td>
-                          <td>₹220</td>
-                          <td>
-                            <select className="form-select form-select-sm status-dropdown">
-                              <option>Pending</option>
-                              <option selected>Preparing</option>
-                              <option>Out for Delivery</option>
-                              <option>Delivered</option>
-                              <option>Cancelled</option>
-                            </select>
-                          </td>
-                          <td>09 Sep 2025, 9:30 PM</td>
-                        </tr>
-                        <tr>
-                          <td>7</td>
-                          <td>#ORD1007</td>
-                          <td>Rahul Jain</td>
-                          <td>Café Coffee Day</td>
-                          <td>2x Cappuccino</td>
-                          <td>₹280</td>
-                          <td>
-                            <select className="form-select form-select-sm status-dropdown">
-                              <option>Pending</option>
-                              <option>Preparing</option>
-                              <option>Out for Delivery</option>
-                              <option selected>Delivered</option>
-                              <option>Cancelled</option>
-                            </select>
-                          </td>
-                          <td>09 Sep 2025, 9:50 PM</td>
-                        </tr>
-                        <tr>
-                          <td>8</td>
-                          <td>#ORD1008</td>
-                          <td>Divya Patel</td>
-                          <td>Biryani Blues</td>
-                          <td>1x Hyderabadi Biryani</td>
-                          <td>₹400</td>
-                          <td>
-                            <select className="form-select form-select-sm status-dropdown">
-                              <option selected>Pending</option>
-                              <option>Preparing</option>
-                              <option>Out for Delivery</option>
-                              <option>Delivered</option>
-                              <option>Cancelled</option>
-                            </select>
-                          </td>
-                          <td>09 Sep 2025, 10:00 PM</td>
-                        </tr>
-                        <tr>
-                          <td>9</td>
-                          <td>#ORD1009</td>
-                          <td>Karan Singh</td>
-                          <td>Barbeque Nation</td>
-                          <td>2x Paneer Tikka</td>
-                          <td>₹600</td>
-                          <td>
-                            <select className="form-select form-select-sm status-dropdown">
-                              <option>Pending</option>
-                              <option>Preparing</option>
-                              <option selected>Out for Delivery</option>
-                              <option>Delivered</option>
-                              <option>Cancelled</option>
-                            </select>
-                          </td>
-                          <td>09 Sep 2025, 10:20 PM</td>
-                        </tr>
-                        <tr>
-                          <td>10</td>
-                          <td>#ORD1010</td>
-                          <td>Sneha Kapoor</td>
-                          <td>Haldiram's</td>
-                          <td>1x Thali, 1x Gulab Jamun</td>
-                          <td>₹480</td>
-                          <td>
-                            <select className="form-select form-select-sm status-dropdown">
-                              <option>Pending</option>
-                              <option>Preparing</option>
-                              <option>Out for Delivery</option>
-                              <option selected>Delivered</option>
-                              <option>Cancelled</option>
-                            </select>
-                          </td>
-                          <td>09 Sep 2025, 10:45 PM</td>
-                        </tr>
+                        {isLoading ? (
+                          [...Array(5)].map((_, index) => (
+                            <tr key={index}>
+                              <td>
+                                <Skeleton />
+                              </td>
+                              <td>
+                                <Skeleton />
+                              </td>
+                              <td>
+                                <Skeleton />
+                              </td>
+                              <td>
+                                <Skeleton />
+                              </td>
+                              <td>
+                                <Skeleton />
+                              </td>
+
+                              <td>
+                                <Skeleton />
+                              </td>
+                              <td>
+                                <Skeleton />
+                              </td>
+                              <td>
+                                <Skeleton />
+                              </td>
+                            </tr>
+                          ))
+                        ) : results?.length ? (
+                          results?.map((item, index) => (
+                            <tr key={item._id}>
+                              <td>{index + 1}</td>
+                              <td>#{item.orderId}</td>
+                              <td>{item.userId.firstName}</td>
+                              <td>2x Pizza, 1x Coke</td>
+                              <td>₹{item.amount}</td>
+                              <td>
+                                <select
+                                  value={item.status}
+                                  className="form-select form-select-sm status-dropdown"
+                                  onChange={(e) =>
+                                    changeOrderSta(item._id, e.target.value)
+                                  }
+                                >
+                                  <option value="Pending">Pending</option>
+                                  <option value="Preparing" selected>
+                                    Preparing
+                                  </option>
+                                  <option value="Out for Delivery">
+                                    Out for Delivery
+                                  </option>
+                                  <option value="Delivered">Delivered</option>
+                                  <option value="Cancelled">Cancelled</option>
+                                </select>
+                              </td>
+                              <td>
+                                {moment(item.createdAt).format(
+                                  "DD MMM YYYY, hh:mm A"
+                                )}
+                              </td>
+                              <td className="text-center">
+                                <button
+                                  className="table-btn bg-main me-2"
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#viewOrderModal"
+                                  onClick={() => setDetails(item)}
+                                >
+                                  <i className="fa fa-eye" />
+                                </button>
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="8" className="text-center">
+                              Oops! No Result Found.
+                            </td>
+                          </tr>
+                        )}
                       </tbody>
                     </table>
                   </div>
@@ -310,6 +263,97 @@ function Dashboard() {
               </div>
             </div>
           </main>
+        </div>
+      </div>
+      <div
+        className="modal fade"
+        id="viewOrderModal"
+        tabIndex={-1}
+        aria-hidden="true"
+        data-bs-backdrop="static"
+      >
+        <div className="modal-dialog modal-dialog-centered modal-lg">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title text-main fw-bold">Order Details</h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                onClick={() => setDetails({})}
+              />
+            </div>
+            <div className="modal-body">
+              <div className="row g-4">
+                {/* Customer Details */}
+                <div className="col-md-6">
+                  <h6 className="fw-bold text-main mb-2">Customer Details</h6>
+                  <p>
+                    <strong>Name:</strong> {details?.userId?.firstName}{" "}
+                    {details?.userId?.lastName}
+                  </p>
+                  <p>
+                    <strong>Email:</strong> {details?.userId?.email}
+                  </p>
+                  <p>
+                    <strong>Phone:</strong> {details?.userId?.phoneNumber}
+                  </p>
+                  <p>
+                    <strong>Address:</strong> {details?.address?.address_line2}{" "}
+                    {details?.address?.address_line1}
+                  </p>
+                </div>
+                {/* Merchant Details */}
+                <div className="col-md-6">
+                  <h6 className="fw-bold text-main mb-2">Merchant Details</h6>
+                  <p>
+                    <strong>Shop:</strong> {details?.merchant?.shopName}
+                  </p>
+                  <p>
+                    <strong>Contact:</strong> {details?.merchant?.phoneNumber}
+                  </p>
+                  <p>
+                    <strong>Location:</strong> {details?.merchant?.address}
+                  </p>
+                </div>
+                {/* Order Details */}
+                <div className="col-12">
+                  <h6 className="fw-bold text-main mb-2">Order Information</h6>
+                  <p>
+                    <strong>Order ID:</strong> #{details?.orderId}
+                  </p>
+                  <p>
+                    <strong>Items:</strong> 2x Pizza, 1x Coke
+                  </p>
+                  <p>
+                    <strong>Total Amount:</strong> ₹{details?.amount}
+                  </p>
+                  <p>
+                    <strong>Payment Method:</strong> UPI
+                  </p>
+                  <p>
+                    <strong>Status:</strong> {details?.status}
+                  </p>
+                  <p>
+                    <strong>Placed At:</strong>{" "}
+                    {moment(details.createdAt).format("DD MMM YYYY, hh:mm A")}
+                  </p>
+                  <p>
+                    <strong>Expected Delivery:</strong> 1 hour
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button
+                className="btn comman-btn-main"
+                onClick={() => setDetails({})}
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </>

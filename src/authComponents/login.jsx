@@ -135,9 +135,9 @@ function Login() {
                   Remember me
                 </label>
               </div>
-              <Link to="/forgot-password" className="view-all">
+              {/* <Link to="/forgot-password" className="view-all">
                 Forgot Password?
-              </Link>
+              </Link> */}
             </div>
 
             <button

@@ -150,17 +150,23 @@ function AddProduct() {
   };
 
   const onSubmit = async (data) => {
-    if (!files.length) {
-      showGlobalAlert("Please upload at least one product image", "error");
+    if (files.length < 5) {
+      showGlobalAlert("Please upload atleast 5 images", "error");
       return;
     }
     const invalidVariations = combination.filter(
       (item) => !item.quantity || !item.price || !item.discountPrice
     );
+    const invalidDiscount = combination.filter(
+      (item) => Number(item.discountPrice) > Number(item.price)
+    );
+    if (invalidDiscount.length > 0) {
+      return;
+    }
 
     if (invalidVariations.length > 0) {
       showGlobalAlert(
-        "Please fill all required fields for variations (quantity, price)",
+        "Please fill all required fields for variations",
         "error"
       );
       return;
@@ -171,6 +177,7 @@ function AddProduct() {
     formData.append("description_en", data.description_en);
     formData.append("categoryId", data.categoryId);
     formData.append("subCategoryId", data.subCategoryId);
+    formData.append("calories", data.calories);
     formData.append("type", data.type);
     files.forEach((file) => {
       formData.append("images", file);
@@ -295,7 +302,9 @@ function AddProduct() {
                           className="upload-content"
                         >
                           <i className="fa fa-cloud-upload" />
-                          <p className="mb-0">Click to Upload Images</p>
+                          <p className="mb-0">
+                            Click to upload at least 5 images
+                          </p>
                           <small className="text-muted">
                             PNG, JPG, JPEG (Max 5MB)
                           </small>
@@ -328,7 +337,7 @@ function AddProduct() {
                       )}
                     </div>
 
-                    <div className="col-md-3">
+                    <div className="col-md-4">
                       <label className="form-label">Product Name</label>
                       <input
                         type="text"
@@ -344,7 +353,7 @@ function AddProduct() {
                         <p className="form-error">{errors.name_en.message}</p>
                       )}
                     </div>
-                    <div className="col-md-3">
+                    <div className="col-md-4">
                       <label className="form-label">Category</label>
                       <select
                         className={`form-control form-select ${
@@ -369,7 +378,7 @@ function AddProduct() {
                         </p>
                       )}
                     </div>
-                    <div className="col-md-3">
+                    <div className="col-md-4">
                       <label className="form-label">Subcategory</label>
                       <select
                         className={`form-control form-select ${
@@ -394,7 +403,23 @@ function AddProduct() {
                         </p>
                       )}
                     </div>
-                    <div className="col-md-3">
+                    <div className="col-md-4">
+                      <label className="form-label">Calories</label>
+                      <input
+                        type="number"
+                        placeholder="Enter calories"
+                        className={`form-control ${
+                          errors.calories ? "input-error" : ""
+                        }`}
+                        {...register("calories", {
+                          required: false,
+                        })}
+                      />
+                      {errors.calories && (
+                        <p className="form-error">{errors.calories.message}</p>
+                      )}
+                    </div>
+                    <div className="col-md-4">
                       <label className="form-label">Type</label>
                       <select
                         className={`form-control form-select ${
@@ -613,6 +638,13 @@ function AddProduct() {
                                                   );
                                                 }}
                                               />
+                                              {Number(item.discountPrice) >=
+                                                Number(item.price) && (
+                                                <p className="form-error">
+                                                  Discounted price cannot be
+                                                  greater than base price
+                                                </p>
+                                              )}
                                             </td>
                                             <td>
                                               <input

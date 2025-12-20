@@ -96,6 +96,19 @@ export async function addProduct(formData) {
     showGlobalAlert(error.message, "error");
   }
 }
+export async function editUser(id, formData) {
+  try {
+    const { data } = await webHttpService.put(
+      `${import.meta.env.VITE_APIENDPOINT}/user/editUser/${id}`,
+      formData
+    );
+    console.log(data);
+
+    return data;
+  } catch (error) {
+    showGlobalAlert(error.message, "error");
+  }
+}
 export async function getValues(formData) {
   try {
     const { data } = await webHttpService.patch(
@@ -164,6 +177,20 @@ export async function updateProductStatus(id) {
   }
 }
 
+export async function updateProduct(id, formData) {
+  try {
+    const { data } = await webHttpService.put(
+      `${import.meta.env.VITE_APIENDPOINT}/products/updateProduct/${id}`,
+      formData
+    );
+    console.log(data);
+
+    return data;
+  } catch (error) {
+    showGlobalAlert(error.message, "error");
+  }
+}
+
 export async function deleteProduct(id) {
   try {
     const { data } = await webHttpService.delete(
@@ -192,6 +219,32 @@ export async function getDashboardCounts() {
   try {
     const { data } = await webHttpService.get(
       `${import.meta.env.VITE_APIENDPOINT}/analytics/getDashboardCounts`
+    );
+    console.log(data);
+
+    return data;
+  } catch (error) {
+    showGlobalAlert(error.message, "error");
+  }
+}
+export async function getOrders(formData) {
+  try {
+    const { data } = await webHttpService.patch(
+      `${import.meta.env.VITE_APIENDPOINT}/products/getOrders`,
+      formData
+    );
+    console.log(data);
+
+    return data;
+  } catch (error) {
+    showGlobalAlert(error.message, "error");
+  }
+}
+export async function changeOrderStatus(formData) {
+  try {
+    const { data } = await webHttpService.patch(
+      `${import.meta.env.VITE_APIENDPOINT}/products/changeOrderStatus`,
+      formData
     );
     console.log(data);
 

@@ -1,5 +1,6 @@
 import React from "react";
 import { useUserAuth } from "./authContext";
+import { Link } from "react-router-dom";
 
 function Header() {
   const { toggleSidebar, profile } = useUserAuth();
@@ -33,10 +34,10 @@ function Header() {
             aria-labelledby="accountMenu"
           >
             <li>
-              <a className="dropdown-item" href="#">
+              <Link className="dropdown-item" to="/merchant/profile">
                 <i className="fa fa-cog me-2" />
                 Settings
-              </a>
+              </Link>
             </li>
           </ul>
         </div>

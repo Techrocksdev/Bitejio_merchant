@@ -436,3 +436,8 @@ textarea,
 #textarea {
   height: 130px !important;
 }
+.react-tel-input .form-control {
+  width: 100% !important;
+  height: 45px !important;
+  border: 1px solid #ededed !important;
+}
