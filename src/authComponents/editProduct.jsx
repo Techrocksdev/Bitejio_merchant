@@ -17,6 +17,8 @@ import { showGlobalAlert } from "../commonComponents/useGlobalAlert";
 import Select from "react-select";
 import { RotatingLines } from "react-loader-spinner";
 import Compressor from "compressorjs";
+import ReactQuill from "react-quill-new";
+import "react-quill-new/dist/quill.snow.css";
 
 function AddProduct() {
   const { isSidebarHidden } = useUserAuth();
@@ -586,19 +588,56 @@ function AddProduct() {
                     </div>
                     <div className="col-md-12">
                       <label className="form-label">Description</label>
-                      <textarea
-                        id="textarea"
-                        placeholder="Enter description"
-                        className={`form-control ${
-                          errors.description_en ? "input-error" : ""
-                        }`}
-                        {...register("description_en", {
+                      <Controller
+                        name="description_en"
+                        control={control}
+                        rules={{
                           required: "Description is required",
-                        })}
-                        style={{ height: "130px!important" }}
+                          validate: (value) => {
+                            const text = value?.replace(/<[^>]*>/g, "").trim();
+                            return text.length > 0 || "Description is required";
+                          },
+                        }}
+                        render={({ field }) => (
+                          <ReactQuill
+                            theme="snow"
+                            value={field.value || ""}
+                            onChange={(content) => {
+                              field.onChange(content);
+                              if (
+                                content.replace(/<[^>]*>/g, "").trim() === ""
+                              ) {
+                                field.onChange("");
+                              }
+                            }}
+                            onBlur={() => {
+                              field.onBlur();
+                            }}
+                            placeholder="Enter description"
+                            className={
+                              errors.description_en ? "input-error" : ""
+                            }
+                            style={{ height: "130px", marginBottom: "65px" }}
+                            modules={{
+                              toolbar: [
+                                [{ header: [1, 2, 3, 4, 5, 6, false] }],
+                                [{ font: [] }],
+                                [{ size: ["small", false, "large", "huge"] }],
+                                ["bold", "italic", "underline", "strike"],
+                                [{ color: [] }, { background: [] }],
+                                [{ script: "sub" }, { script: "super" }],
+                                [{ list: "ordered" }, { list: "bullet" }],
+                                [{ indent: "-1" }, { indent: "+1" }],
+                                [{ align: [] }],
+                                ["blockquote", "code-block"],
+                                ["clean"],
+                              ],
+                            }}
+                          />
+                        )}
                       />
                       {errors.description_en && (
-                        <p className="form-error">
+                        <p className="form-error" style={{ marginTop: "75px" }}>
                           {errors.description_en.message}
                         </p>
                       )}

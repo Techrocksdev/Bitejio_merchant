@@ -310,8 +310,24 @@ function Dashboard() {
                     <strong>Phone:</strong> {details?.userId?.phoneNumber}
                   </p>
                   <p>
-                    <strong>Address:</strong> {details?.address?.address_line2}{" "}
-                    {details?.address?.address_line1}
+                    <strong>Address:</strong>{" "}
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                        `${details?.address?.address_line2} ${details?.address?.address_line1}`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        color: "#ff6b00",
+                        fontWeight: "400",
+                        textDecoration: "underline",
+                        textUnderlineOffset: "4px",
+                      }}
+                    >
+                      <i className="fas fa-map-marker-alt me-1"></i>
+                      {details?.address?.address_line2}{" "}
+                      {details?.address?.address_line1}
+                    </a>
                   </p>
                 </div>
                 {/* Merchant Details */}

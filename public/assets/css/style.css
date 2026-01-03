@@ -441,3 +441,14 @@ textarea,
   height: 45px !important;
   border: 1px solid #ededed !important;
 }
+.ql-container {
+  height: 130px !important;
+}
+
+.ql-editor {
+  min-height: 130px;
+}
+
+.input-error .ql-container {
+  border-color: #dc3545;
+}
