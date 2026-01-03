@@ -4,7 +4,11 @@ import SideBar from "../commonComponents/sideBar";
 import Header from "../commonComponents/header";
 import { useUserAuth } from "../commonComponents/authContext";
 import { useQuery } from "@tanstack/react-query";
-import { getDashboardCounts } from "../apiServices/home/homeHttpService";
+import {
+  assignDeliveryBoy,
+  getDashboardCounts,
+  getMyDeliveryBoys,
+} from "../apiServices/home/homeHttpService";
 import {
   changeOrderStatus,
   getOrders,
@@ -15,6 +19,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 import moment from "moment";
 function Dashboard() {
   const { isSidebarHidden } = useUserAuth();
+  const [orderId, setOrderId] = useState("");
 
   const [details, setDetails] = useState({});
   const { data: count } = useQuery({
@@ -51,6 +56,25 @@ function Dashboard() {
   });
 
   const results = response?.results?.orders || [];
+  const { data: response2 } = useQuery({
+    queryKey: ["deliveryBoyList"],
+    queryFn: async () => {
+      const formData = {
+        page: 1,
+        pageSize: 1000,
+        search: "",
+        from: "",
+        to: "",
+        status: "",
+      };
+      return getMyDeliveryBoys(formData);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
+  const results2 = response2?.results?.deliveryBoys || [];
 
   const changeOrderSta = async (id, status) => {
     const formData = {
@@ -69,6 +93,25 @@ function Dashboard() {
       console.log("An error occurred");
     }
   };
+  const asDeliveryBoy = async (id) => {
+    const formData = {
+      orderId: orderId,
+      userId: id,
+    };
+    try {
+      const response = await assignDeliveryBoy(formData);
+      if (!response.error) {
+        document.getElementById("closemodalFordel").click();
+        refetch();
+      } else {
+        showGlobalAlert(response.message, "error");
+      }
+      // eslint-disable-next-line no-unused-vars
+    } catch (error) {
+      console.log("An error occurred");
+    }
+  };
+
   return (
     <>
       <div className="admin-wrapper d-flex">
@@ -228,9 +271,18 @@ function Dashboard() {
                                 <select
                                   value={item.status}
                                   className="form-select form-select-sm status-dropdown"
-                                  onChange={(e) =>
-                                    changeOrderSta(item._id, e.target.value)
-                                  }
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+
+                                    if (value === "Out for Delivery") {
+                                      document
+                                        .getElementById("modalFordel")
+                                        ?.click();
+                                      setOrderId(item._id);
+                                    } else {
+                                      changeOrderSta(item._id, value);
+                                    }
+                                  }}
                                 >
                                   <option value="Pending">Pending</option>
                                   <option value="Preparing" selected>
@@ -390,6 +442,61 @@ function Dashboard() {
           </div>
         </div>
       </div>
+      <div
+        className="modal fade"
+        id="viewDelBoyModal"
+        tabIndex={-1}
+        aria-hidden="true"
+        data-bs-backdrop="static"
+      >
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title text-main fw-bold">Delivery Boy</h5>
+            </div>
+            <div className="modal-body">
+              <div className="col-md-12">
+                <select
+                  className="form-control form-select"
+                  id="actionSelect"
+                  onChange={(e) => {
+                    changeOrderSta(orderId, "Out for Delivery");
+                    asDeliveryBoy(e.target.value);
+                  }}
+                >
+                  <option hidden value="">
+                    Select Delivery Boy
+                  </option>
+                  {results2.map((item) => (
+                    <option key={item._id} value={item._id}>
+                      {item.firstName} {item.lastName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button
+                className="btn comman-btn-main"
+                id="closemodalFordel"
+                data-bs-dismiss="modal"
+                onClick={() => {
+                  setOrderId("");
+                  document.getElementById("actionSelect").value = "";
+                }}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="d-none"
+        id="modalFordel"
+        data-bs-toggle="modal"
+        data-bs-target="#viewDelBoyModal"
+      ></div>
     </>
   );
 }

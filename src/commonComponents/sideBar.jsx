@@ -55,6 +55,17 @@ function SideBar() {
           </li>
           <li>
             <Link
+              className={
+                location.pathname.includes("deliveryboys") ? "active" : ""
+              }
+              to="/merchant/deliveryboys"
+            >
+              <i className="fa fa-user me-2" />
+              Delivery Management
+            </Link>
+          </li>
+          <li>
+            <Link
               className={location.pathname.includes("orders") ? "active" : ""}
               to="/merchant/orders"
             >

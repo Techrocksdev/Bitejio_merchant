@@ -23,7 +23,7 @@ import "react-quill-new/dist/quill.snow.css";
 function AddProduct() {
   const { isSidebarHidden } = useUserAuth();
   const [loader, setLoader] = useState(false);
-  const [combination, setCombination] = useState(false);
+  const [combination, setCombination] = useState([]);
   const [files, setFiles] = useState([]);
   const [existingImages, setExistingImages] = useState([]);
   const [progress, setProgress] = useState(0);
@@ -175,6 +175,7 @@ function AddProduct() {
       setValue("subCategoryId", "");
     }
   }, [watch("categoryId"), setValue]);
+
   useEffect(() => {
     if (results?.name_en && results?.variants?.length && attist?.length) {
       const attributeIds = results.variants
@@ -210,17 +211,19 @@ function AddProduct() {
 
       const existingCombinations = results.variants
         .map((variant) => {
-          if (!variant.combination?.[0]) return null;
+          if (!variant.combination || variant.combination.length === 0)
+            return null;
 
-          return {
-            attributeId: variant.combination[0].attributeId?._id,
-            valueId: variant.combination[0].valueId?._id,
-            attributeName: variant.combination[0].attributeId?.name_en,
-            valueName: variant.combination[0].valueId?.name_en,
+          return variant.combination.map((combo) => ({
+            _id: variant._id,
+            attributeId: combo.attributeId?._id,
+            valueId: combo.valueId?._id,
+            attributeName: combo.attributeId?.name_en,
+            valueName: combo.valueId?.name_en,
             price: variant.price,
             discountPrice: variant.discountPrice,
             quantity: variant.quantity,
-          };
+          }));
         })
         .filter(Boolean);
 
@@ -244,7 +247,7 @@ function AddProduct() {
     try {
       const response = await createCombinations(formData);
       if (!response.error) {
-        setCombination(response.results.combinations[0]);
+        setCombination(response.results.combinations);
       } else {
         showGlobalAlert(response.message, "error");
       }
@@ -264,12 +267,14 @@ function AddProduct() {
       return;
     }
 
-    const invalidVariations = combination.filter(
-      (item) => !item.quantity || !item.price || !item.discountPrice
+    const invalidVariations = combination.flatMap((group) =>
+      group.filter(
+        (item) => !item.quantity || !item.price || !item.discountPrice
+      )
     );
 
-    const invalidDiscount = combination.filter(
-      (item) => Number(item.discountPrice) > Number(item.price)
+    const invalidDiscount = combination.flatMap((group) =>
+      group.filter((item) => Number(item.discountPrice) > Number(item.price))
     );
 
     if (invalidDiscount.length > 0) {
@@ -301,7 +306,8 @@ function AddProduct() {
       formData.append("images", file);
     });
 
-    const variants = combination.map((item) => ({
+    const variants = combination.flat().map((item) => ({
+      _id: item._id,
       quantity: item.quantity || 0,
       price: item.price || 0,
       discountPrice: item.discountPrice || 0,
@@ -312,7 +318,6 @@ function AddProduct() {
         },
       ],
     }));
-
     formData.append("variants", JSON.stringify(variants));
 
     try {
@@ -586,7 +591,7 @@ function AddProduct() {
                         <p className="form-error">{errors.type.message}</p>
                       )}
                     </div>
-                    <div className="col-md-12">
+                    <div className="col-md-12 ReactQuill">
                       <label className="form-label">Description</label>
                       <Controller
                         name="description_en"
@@ -759,7 +764,6 @@ function AddProduct() {
                                     <table className="table table-hover align-middle">
                                       <thead className="table-light">
                                         <tr>
-                                          <th>S.No</th>
                                           <th>Attribute Name</th>
                                           <th>Combination</th>
                                           <th>Price</th>
@@ -771,106 +775,102 @@ function AddProduct() {
                                         </tr>
                                       </thead>
                                       <tbody>
-                                        {combination?.map((item, index) => (
-                                          <tr key={item._id}>
-                                            <td>{index + 1}</td>
-                                            <td>{item.attributeName}</td>
-                                            <td>
-                                              <div className="badge bg-main">
-                                                {item.valueName}
-                                              </div>
-                                            </td>
-                                            <td>
-                                              <input
-                                                type="number"
-                                                className="form-control small-width"
-                                                value={item.price || ""}
-                                                onChange={(e) => {
-                                                  const updatedCombinations = [
-                                                    ...combination,
-                                                  ];
-                                                  updatedCombinations[index] = {
-                                                    ...updatedCombinations[
-                                                      index
-                                                    ],
-                                                    price: e.target.value,
-                                                  };
-                                                  setCombination(
-                                                    updatedCombinations
-                                                  );
-                                                }}
-                                              />
-                                            </td>
-                                            <td>
-                                              <input
-                                                type="number"
-                                                className="form-control small-width"
-                                                value={item.discountPrice || ""}
-                                                onChange={(e) => {
-                                                  const updatedCombinations = [
-                                                    ...combination,
-                                                  ];
-                                                  updatedCombinations[index] = {
-                                                    ...updatedCombinations[
-                                                      index
-                                                    ],
-                                                    discountPrice:
-                                                      e.target.value,
-                                                  };
-                                                  setCombination(
-                                                    updatedCombinations
-                                                  );
-                                                }}
-                                              />
-                                              {Number(item.discountPrice) >=
-                                                Number(item.price) && (
-                                                <p className="form-error">
-                                                  Discounted price cannot be
-                                                  greater than base price
-                                                </p>
-                                              )}
-                                            </td>
-                                            <td>
-                                              <input
-                                                type="number"
-                                                className="form-control small-width"
-                                                value={item.quantity || ""}
-                                                onChange={(e) => {
-                                                  const updatedCombinations = [
-                                                    ...combination,
-                                                  ];
-                                                  updatedCombinations[index] = {
-                                                    ...updatedCombinations[
-                                                      index
-                                                    ],
-                                                    quantity: e.target.value,
-                                                  };
-                                                  setCombination(
-                                                    updatedCombinations
-                                                  );
-                                                }}
-                                              />
-                                            </td>
-
-                                            <td className="text-center">
-                                              <button
-                                                className="table-btn bg-danger"
-                                                onClick={(e) => {
-                                                  e.preventDefault();
-                                                  const updatedCombinations =
-                                                    combination.filter(
-                                                      (_, i) => i !== index
+                                        {combination?.map((itm, index1) =>
+                                          itm?.map((item, index2) => (
+                                            <tr key={item._id}>
+                                              <td>{item.attributeName}</td>
+                                              <td>
+                                                <div className="badge bg-main">
+                                                  {item.valueName}
+                                                </div>
+                                              </td>
+                                              <td>
+                                                <input
+                                                  type="number"
+                                                  className="form-control small-width"
+                                                  value={item.price || ""}
+                                                  onChange={(e) => {
+                                                    const updatedCombinations =
+                                                      [...combination];
+                                                    updatedCombinations[index1][
+                                                      index2
+                                                    ].price = e.target.value;
+                                                    setCombination(
+                                                      updatedCombinations
                                                     );
-                                                  setCombination(
-                                                    updatedCombinations
-                                                  );
-                                                }}
-                                              >
-                                                <i className="fa fa-trash" />
-                                              </button>
-                                            </td>
-                                          </tr>
-                                        ))}
+                                                  }}
+                                                />
+                                              </td>
+                                              <td>
+                                                <input
+                                                  type="number"
+                                                  className="form-control small-width"
+                                                  value={
+                                                    item.discountPrice || ""
+                                                  }
+                                                  onChange={(e) => {
+                                                    const updatedCombinations =
+                                                      [...combination];
+                                                    updatedCombinations[index1][
+                                                      index2
+                                                    ].discountPrice =
+                                                      e.target.value;
+                                                    setCombination(
+                                                      updatedCombinations
+                                                    );
+                                                  }}
+                                                />
+                                                {Number(item.discountPrice) >=
+                                                  Number(item.price) && (
+                                                  <p className="form-error">
+                                                    Discounted price cannot be
+                                                    greater than base price
+                                                  </p>
+                                                )}
+                                              </td>
+                                              <td>
+                                                <input
+                                                  type="number"
+                                                  className="form-control small-width"
+                                                  value={item.quantity || ""}
+                                                  onChange={(e) => {
+                                                    const updatedCombinations =
+                                                      [...combination];
+                                                    updatedCombinations[index1][
+                                                      index2
+                                                    ].quantity = e.target.value;
+                                                    setCombination(
+                                                      updatedCombinations
+                                                    );
+                                                  }}
+                                                />
+                                              </td>
+
+                                              <td className="text-center">
+                                                <button
+                                                  className="table-btn bg-danger"
+                                                  onClick={(e) => {
+                                                    e.preventDefault();
+                                                    const updatedCombinations =
+                                                      [...combination];
+                                                    updatedCombinations[
+                                                      index1
+                                                    ] = updatedCombinations[
+                                                      index1
+                                                    ].filter(
+                                                      (_, i) => i !== index2
+                                                    );
+                                                    setCombination(
+                                                      updatedCombinations
+                                                    );
+                                                  }}
+                                                >
+                                                  <i className="fa fa-trash" />
+                                                </button>
+                                              </td>
+                                            </tr>
+                                          ))
+                                        )}
                                       </tbody>
                                     </table>
                                   </div>

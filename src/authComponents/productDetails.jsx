@@ -10,6 +10,8 @@ import "react-loading-skeleton/dist/skeleton.css";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import ReactQuill from "react-quill-new";
+import "react-quill-new/dist/quill.snow.css";
 
 function ProductDetails() {
   const { isSidebarHidden } = useUserAuth();
@@ -152,25 +154,31 @@ function ProductDetails() {
                   </div>
                   <div className="col-md-12 my-2">
                     <div className="row g-3">
-                      <div className="col-md-3">
+                      <div className="col-md-4">
                         <h2 className="fs-5 fw-semibold m-0">Products Name</h2>
                         <p className="fs-6 fw-normal text-main m-0">
                           {results?.name_en || <Skeleton />}
                         </p>
                       </div>
-                      <div className="col-md-3">
+                      <div className="col-md-4">
                         <h2 className="fs-5 fw-semibold m-0">Category</h2>
                         <p className="fs-6 fw-normal text-main m-0">
                           {results?.categoryId?.name_en || <Skeleton />}
                         </p>
                       </div>
-                      <div className="col-md-3">
+                      <div className="col-md-4">
                         <h2 className="fs-5 fw-semibold m-0">Sub Category</h2>
                         <p className="fs-6 fw-normal text-main m-0">
                           {results?.subCategoryId?.name_en || <Skeleton />}
                         </p>
                       </div>
-                      <div className="col-md-3">
+                      <div className="col-md-4">
+                        <h2 className="fs-5 fw-semibold m-0">Calories</h2>
+                        <p className="fs-6 fw-normal text-main m-0">
+                          {results?.calories || <Skeleton />}
+                        </p>
+                      </div>
+                      <div className="col-md-4">
                         <h2 className="fs-5 fw-semibold m-0">Type</h2>
                         <p className="fs-6 fw-normal text-main m-0"></p>
                         {results?.type ? (
@@ -191,7 +199,16 @@ function ProductDetails() {
                       <div className="col-md-12">
                         <h2 className="fs-5 fw-semibold m-0">Description</h2>
                         <p className="fs-6 fw-normal text-main m-0"></p>
-                        {results?.description_en || <Skeleton />}
+                        {results?.description_en ? (
+                          <ReactQuill
+                            value={results?.description_en || ""}
+                            readOnly={true}
+                            theme="bubble"
+                            modules={{ toolbar: false }}
+                          />
+                        ) : (
+                          <Skeleton />
+                        )}
                         <p />
                       </div>
                     </div>

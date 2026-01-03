@@ -1,60 +1,38 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import SideBar from "../commonComponents/sideBar";
 import Header from "../commonComponents/header";
 import { useUserAuth } from "../commonComponents/authContext";
 import { useQuery } from "@tanstack/react-query";
 import {
-  assignDeliveryBoy,
-  changeOrderStatus,
+  deleteDeliveryBoy,
   getMyDeliveryBoys,
-  getOrders,
+  updateDeliveryBoyStatus,
 } from "../apiServices/home/homeHttpService";
-import { showGlobalAlert } from "../commonComponents/useGlobalAlert";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import moment from "moment";
+import { showGlobalAlert } from "../commonComponents/useGlobalAlert";
+import { Link } from "react-router-dom";
+import AddDeliveryboy from "./addDeliveryboy";
 
-function Orders() {
+function DeliveryBoy() {
   const { isSidebarHidden } = useUserAuth();
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setpageSize] = useState(10);
   const [details, setDetails] = useState({});
-  const [orderId, setOrderId] = useState("");
+  const [delId, setDelId] = useState("");
+
+  useEffect(() => {}, [details]);
 
   const {
     data: response,
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ["ordersList", currentPage, pageSize],
+    queryKey: ["deliveryBoyList", currentPage, pageSize],
     queryFn: async () => {
       const formData = {
         page: currentPage,
         pageSize: pageSize,
-        search: "",
-        userId: "",
-        year: 0,
-        month: 0,
-        startDate: "",
-        endDate: "",
-      };
-      return getOrders(formData);
-    },
-    onError: (error) => {
-      console.log(error);
-    },
-  });
-
-  const results = response?.results?.orders || [];
-  const totalPages = Math.ceil(response?.results?.totalPages);
-
-  const { data: response2 } = useQuery({
-    queryKey: ["deliveryBoyList"],
-    queryFn: async () => {
-      const formData = {
-        page: 1,
-        pageSize: 1000,
         search: "",
         from: "",
         to: "",
@@ -67,7 +45,8 @@ function Orders() {
     },
   });
 
-  const results2 = response2?.results?.deliveryBoys || [];
+  const results = response?.results?.deliveryBoys || [];
+  const totalPages = Math.ceil(response?.results?.totalPages);
 
   const handlePageChange = (newPage) => {
     if (newPage > 0 && newPage <= totalPages) {
@@ -75,14 +54,11 @@ function Orders() {
     }
   };
 
-  const changeOrderSta = async (id, status) => {
-    const formData = {
-      orderId: id,
-      status: status,
-    };
+  const changeStatus = async (id) => {
     try {
-      const response = await changeOrderStatus(formData);
+      const response = await updateDeliveryBoyStatus(id);
       if (!response.error) {
+        showGlobalAlert(response.message, "success");
         refetch();
       } else {
         showGlobalAlert(response.message, "error");
@@ -92,15 +68,12 @@ function Orders() {
       console.log("An error occurred");
     }
   };
-  const asDeliveryBoy = async (id) => {
-    const formData = {
-      orderId: orderId,
-      userId: id,
-    };
+  const deleteMerchant = async (id) => {
     try {
-      const response = await assignDeliveryBoy(formData);
+      const response = await deleteDeliveryBoy(id);
       if (!response.error) {
-        document.getElementById("closemodalFordel").click();
+        showGlobalAlert(response.message, "success");
+        document.getElementById("close").click();
         refetch();
       } else {
         showGlobalAlert(response.message, "error");
@@ -130,7 +103,14 @@ function Orders() {
             <div className="card">
               <div className="card-header">
                 <div className="d-flex gap-3 align-items-center justify-content-between">
-                  <h3 className="fw-semibold fs-5">Order Management</h3>
+                  <h3 className="fw-semibold fs-5">Delivery Boy Management</h3>
+                  <button
+                    className="btn btn-sm btn-light w-auto"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addMerchantModal"
+                  >
+                    <i className="fa fa-plus me-1" /> Add
+                  </button>
                 </div>
               </div>
               <div className="table-responsive shadow-sm rounded bg-white p-3">
@@ -138,12 +118,10 @@ function Orders() {
                   <thead className="table-light">
                     <tr>
                       <th>S.No</th>
-                      <th>Order ID</th>
-                      <th>Customer</th>
-                      <th>Items</th>
-                      <th>Total</th>
+                      <th>First Name</th>
+                      <th>Last Name</th>
+                      <th>Email</th>
                       <th>Status</th>
-                      <th>Date</th>
                       <th className="text-center">Actions</th>
                     </tr>
                   </thead>
@@ -166,13 +144,6 @@ function Orders() {
                           <td>
                             <Skeleton />
                           </td>
-
-                          <td>
-                            <Skeleton />
-                          </td>
-                          <td>
-                            <Skeleton />
-                          </td>
                           <td>
                             <Skeleton />
                           </td>
@@ -180,69 +151,55 @@ function Orders() {
                       ))
                     ) : results?.length ? (
                       results?.map((item, index) => (
-                        <tr key={item._id}>
+                        <tr>
                           <td>{index + 1}</td>
-                          <td>#{item.orderId}</td>
-                          <td>{item.userId.firstName}</td>
+                          <td>{item.firstName}</td>
+                          <td>{item.lastName}</td>
+                          <td>{item.email}</td>
                           <td>
-                            {item.products &&
-                              item.products.map((product, index) => (
-                                <span key={product._id || index}>
-                                  {product.quantity}x{" "}
-                                  {product.productId?.name_en}
-                                  {index < item.products.length - 1 ? ", " : ""}
-                                </span>
-                              ))}
-                          </td>
-                          <td>₹{item.amount}</td>
-                          <td>
-                            <select
-                              value={item.status}
-                              className="form-select form-select-sm status-dropdown"
-                              onChange={(e) => {
-                                const value = e.target.value;
-
-                                if (value === "Out for Delivery") {
-                                  document
-                                    .getElementById("modalFordel")
-                                    ?.click();
-                                  setOrderId(item._id);
-                                } else {
-                                  changeOrderSta(item._id, value);
-                                }
-                              }}
-                            >
-                              <option value="Pending">Pending</option>
-                              <option value="Preparing" selected>
-                                Preparing
-                              </option>
-                              <option value="Out for Delivery">
-                                Out for Delivery
-                              </option>
-                              <option value="Delivered">Delivered</option>
-                              <option value="Cancelled">Cancelled</option>
-                            </select>
-                          </td>
-                          <td>
-                            {moment(item.createdAt).format(
-                              "DD MMM YYYY, hh:mm A"
-                            )}
+                            <div className="form-check form-switch">
+                              <input
+                                className="form-check-input"
+                                type="checkbox"
+                                checked={item.status}
+                                onChange={() => changeStatus(item._id)}
+                              />
+                            </div>
                           </td>
                           <td className="text-center">
                             <button
                               className="table-btn bg-main me-2"
                               data-bs-toggle="modal"
-                              data-bs-target="#viewOrderModal"
+                              data-bs-target="#viewMerchantModal"
                               onClick={() => setDetails(item)}
                             >
                               <i className="fa fa-eye" />
+                            </button>
+                            <button
+                              className="table-btn bg-main me-2"
+                              data-bs-toggle="modal"
+                              data-bs-target="#addMerchantModal"
+                              onClick={() => setDetails(item)}
+                            >
+                              <i className="fa fa-edit" />
+                            </button>
+                            <button
+                              className="table-btn bg-danger"
+                              data-bs-toggle="modal"
+                              data-bs-target="#delete"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setDelId(item._id);
+                              }}
+                            >
+                              <i className="fa fa-trash" />
                             </button>
                           </td>
                         </tr>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="8" className="text-center">
+                        <td colSpan="6" className="text-center">
                           Oops! No Result Found.
                         </td>
                       </tr>
@@ -349,17 +306,21 @@ function Orders() {
           </main>
         </div>
       </div>
+
+      {/* View Merchant Modal */}
       <div
         className="modal fade"
-        id="viewOrderModal"
+        id="viewMerchantModal"
         tabIndex={-1}
         aria-hidden="true"
         data-bs-backdrop="static"
       >
-        <div className="modal-dialog modal-dialog-centered modal-lg">
+        <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title text-main fw-bold">Order Details</h5>
+              <h5 className="modal-title text-main fw-bold">
+                Delivery Boy Details
+              </h5>
               <button
                 type="button"
                 className="btn-close"
@@ -368,94 +329,33 @@ function Orders() {
               />
             </div>
             <div className="modal-body">
-              <div className="row g-4">
-                {/* Customer Details */}
-                <div className="col-md-6">
-                  <h6 className="fw-bold text-main mb-2">Customer Details</h6>
-                  <p>
-                    <strong>Name:</strong> {details?.userId?.firstName}{" "}
-                    {details?.userId?.lastName}
-                  </p>
-                  <p>
-                    <strong>Email:</strong> {details?.userId?.email}
-                  </p>
-                  <p>
-                    <strong>Phone:</strong> {details?.userId?.phoneNumber}
-                  </p>
-                  <p>
-                    <strong>Address:</strong>{" "}
-                    <a
-                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                        `${details?.address?.address_line2} ${details?.address?.address_line1}`
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        color: "#ff6b00",
-                        fontWeight: "400",
-                        textDecoration: "underline",
-                        textUnderlineOffset: "4px",
-                      }}
-                    >
-                      <i className="fas fa-map-marker-alt me-1"></i>
-                      {details?.address?.address_line2}{" "}
-                      {details?.address?.address_line1}
-                    </a>
-                  </p>
-                </div>
-                {/* Merchant Details */}
-                <div className="col-md-6">
-                  <h6 className="fw-bold text-main mb-2">Merchant Details</h6>
-                  <p>
-                    <strong>Shop:</strong> {details?.merchant?.shopName}
-                  </p>
-                  <p>
-                    <strong>Contact:</strong> {details?.merchant?.phoneNumber}
-                  </p>
-                  <p>
-                    <strong>Location:</strong> {details?.merchant?.address}
-                  </p>
-                </div>
-                {/* Order Details */}
-                <div className="col-12">
-                  <h6 className="fw-bold text-main mb-2">Order Information</h6>
-                  <p>
-                    <strong>Order ID:</strong> #{details?.orderId}
-                  </p>
-                  <p>
-                    <strong>Items:</strong>
-                    {details?.products &&
-                      details?.products.map((product, index) => (
-                        <span key={product._id || index}>
-                          {product.quantity}x {product.productId?.name_en}
-                          {index < details?.products.length - 1 ? ", " : ""}
-                        </span>
-                      ))}
-                  </p>
-                  <p>
-                    <strong>Total Amount:</strong> ₹{details?.amount}
-                  </p>
-                  <p>
-                    <strong>Payment Method:</strong> UPI
-                  </p>
-                  <p>
-                    <strong>Status:</strong> {details?.status}
-                  </p>
-                  <p>
-                    <strong>Placed At:</strong>{" "}
-                    {moment(details.createdAt).format("DD MMM YYYY, hh:mm A")}
-                  </p>
-                  <p>
-                    <strong>Expected Delivery:</strong> 1 hour
-                  </p>
-                </div>
-              </div>
+              <p>
+                <strong>First Name:</strong> {details?.firstName}
+              </p>
+              <p>
+                <strong>Last Name:</strong> {details?.lastName}
+              </p>
+
+              <p>
+                <strong>Email:</strong> {details?.email}
+              </p>
+
+              <p>
+                <strong>Address:</strong> {details?.address}
+              </p>
+              <p>
+                <strong> Phone Number:</strong> {details?.phoneNumber}
+              </p>
+              <p>
+                <strong>Status:</strong>{" "}
+                {details?.status ? "Active" : "Inactive"}
+              </p>
             </div>
             <div className="modal-footer">
               <button
                 className="btn comman-btn-main"
-                onClick={() => setDetails({})}
                 data-bs-dismiss="modal"
+                onClick={() => setDetails({})}
               >
                 Close
               </button>
@@ -463,63 +363,68 @@ function Orders() {
           </div>
         </div>
       </div>
+
+      {/* Add Merchant Modal */}
+
       <div
         className="modal fade"
-        id="viewDelBoyModal"
+        id="addMerchantModal"
         tabIndex={-1}
         aria-hidden="true"
         data-bs-backdrop="static"
       >
+        <div className="modal-dialog modal-dialog-centered modal-lg">
+          <AddDeliveryboy
+            details={details}
+            setDetails={setDetails}
+            refetch={refetch}
+            setCurrentPage={setCurrentPage}
+          />
+        </div>
+      </div>
+      <div
+        className="modal fade logoutmodal"
+        id="delete"
+        tabIndex={-1}
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title text-main fw-bold">Delivery Boy</h5>
-            </div>
             <div className="modal-body">
-              <div className="col-md-12">
-                <select
-                  className="form-control form-select"
-                  id="actionSelect"
-                  onChange={(e) => {
-                    changeOrderSta(orderId, "Out for Delivery");
-                    asDeliveryBoy(e.target.value);
-                  }}
-                >
-                  <option hidden value="">
-                    Select Delivery Boy
-                  </option>
-                  {results2.map((item) => (
-                    <option key={item._id} value={item._id}>
-                      {item.firstName} {item.lastName}
-                    </option>
-                  ))}
-                </select>
+              <div className="paymentmodal_main text-center">
+                <div className="payment_head mb-3 mt-1">
+                  <h2>Confirmation</h2>
+                  <p>Are you sure? This action can not be reverted.</p>
+                </div>
+                <div className="row justify-content-center mb-2">
+                  <div className="col-auto">
+                    <button
+                      className="comman-btn-main"
+                      onClick={() => deleteMerchant(delId)}
+                    >
+                      Yes
+                    </button>
+                  </div>
+                  <div className="col-auto">
+                    <Link
+                      className="comman-btn-main white"
+                      data-bs-dismiss="modal"
+                      to=""
+                      onClick={() => setDelId("")}
+                      id="close"
+                    >
+                      No
+                    </Link>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="modal-footer">
-              <button
-                className="btn comman-btn-main"
-                id="closemodalFordel"
-                data-bs-dismiss="modal"
-                onClick={() => {
-                  setOrderId("");
-                  document.getElementById("actionSelect").value = "";
-                }}
-              >
-                Close
-              </button>
             </div>
           </div>
         </div>
       </div>
-      <div
-        className="d-none"
-        id="modalFordel"
-        data-bs-toggle="modal"
-        data-bs-target="#viewDelBoyModal"
-      ></div>
     </>
   );
 }
 
-export default React.memo(Orders);
+export default React.memo(DeliveryBoy);

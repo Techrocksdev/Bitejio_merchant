@@ -253,3 +253,84 @@ export async function changeOrderStatus(formData) {
     showGlobalAlert(error.message, "error");
   }
 }
+
+export async function addDeliveryBoy(formData) {
+  try {
+    const { data } = await webHttpService.post(
+      `${import.meta.env.VITE_APIENDPOINT}/user/addDeliveryBoy`,
+      formData
+    );
+    console.log(data);
+
+    return data;
+  } catch (error) {
+    showGlobalAlert(error.message, "error");
+  }
+}
+
+export async function getMyDeliveryBoys(formData) {
+  try {
+    const { data } = await webHttpService.patch(
+      `${import.meta.env.VITE_APIENDPOINT}/user/getMyDeliveryBoys`,
+      formData
+    );
+    console.log(data);
+
+    return data;
+  } catch (error) {
+    showGlobalAlert(error.message, "error");
+  }
+}
+
+export async function editDeliveryBoy(formData) {
+  try {
+    const { data } = await webHttpService.put(
+      `${import.meta.env.VITE_APIENDPOINT}/user/editDeliveryBoy`,
+      formData
+    );
+    console.log(data);
+
+    return data;
+  } catch (error) {
+    showGlobalAlert(error.message, "error");
+  }
+}
+
+export async function updateDeliveryBoyStatus(id) {
+  try {
+    const { data } = await webHttpService.get(
+      `${import.meta.env.VITE_APIENDPOINT}/user/updateDeliveryBoyStatus/${id}`
+    );
+    console.log(data);
+
+    return data;
+  } catch (error) {
+    showGlobalAlert(error.message, "error");
+  }
+}
+
+export async function deleteDeliveryBoy(id) {
+  try {
+    const { data } = await webHttpService.delete(
+      `${import.meta.env.VITE_APIENDPOINT}/user/deleteDeliveryBoy/${id}`
+    );
+    console.log(data);
+
+    return data;
+  } catch (error) {
+    showGlobalAlert(error.message, "error");
+  }
+}
+export async function assignDeliveryBoy(formData) {
+  try {
+    const { data } = await webHttpService.patch(
+      `${import.meta.env.VITE_APIENDPOINT}/products/assignDeliveryBoy`,
+      formData
+    );
+    console.log(data);
+
+    return data;
+  } catch (error) {
+    showGlobalAlert(error.message, "error");
+  }
+}

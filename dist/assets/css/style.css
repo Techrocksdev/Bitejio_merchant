@@ -441,11 +441,11 @@ textarea,
   height: 45px !important;
   border: 1px solid #ededed !important;
 }
-.ql-container {
+.ReactQuill .ql-container {
   height: 130px !important;
 }
 
-.ql-editor {
+.ReactQuill .ql-editor {
   min-height: 130px;
 }
 
