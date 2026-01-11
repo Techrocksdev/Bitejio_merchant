@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import SideBar from "../commonComponents/sideBar";
 import Header from "../commonComponents/header";
@@ -14,6 +14,10 @@ import { showGlobalAlert } from "../commonComponents/useGlobalAlert";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import moment from "moment";
+import { DateRangePicker } from "react-date-range";
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
+import { format } from "date-fns";
 
 function Orders() {
   const { isSidebarHidden } = useUserAuth();
@@ -21,23 +25,39 @@ function Orders() {
   const [pageSize, setpageSize] = useState(10);
   const [details, setDetails] = useState({});
   const [orderId, setOrderId] = useState("");
+  const [filter, setFilter] = useState("");
+  const [search, setSearch] = useState("");
+  const [dateRange, setDateRange] = useState([
+    {
+      startDate: "",
+      endDate: "",
+      key: "selection",
+    },
+  ]);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const datePickerRef = useRef(null);
 
   const {
     data: response,
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ["ordersList", currentPage, pageSize],
+    queryKey: ["ordersList", currentPage, pageSize, filter, search],
     queryFn: async () => {
       const formData = {
         page: currentPage,
         pageSize: pageSize,
-        search: "",
+        search: search,
+        status: filter,
         userId: "",
         year: 0,
         month: 0,
-        startDate: "",
-        endDate: "",
+        startDate: dateRange[0].startDate
+          ? format(dateRange[0].startDate, "yyyy-MM-dd")
+          : "",
+        endDate: dateRange[0].endDate
+          ? format(dateRange[0].endDate, "yyyy-MM-dd")
+          : "",
       };
       return getOrders(formData);
     },
@@ -73,6 +93,31 @@ function Orders() {
     if (newPage > 0 && newPage <= totalPages) {
       setCurrentPage(newPage);
     }
+  };
+
+  const handleDateSelect = (ranges) => {
+    setDateRange([ranges.selection]);
+  };
+
+  const handleApplyDateRange = () => {
+    setShowDatePicker(false);
+    if (dateRange[0].startDate && dateRange[0].endDate) {
+      refetch();
+    }
+  };
+
+  const handleClearDateRange = () => {
+    setDateRange([
+      {
+        startDate: "",
+        endDate: "",
+        key: "selection",
+      },
+    ]);
+    setShowDatePicker(false);
+    setTimeout(() => {
+      refetch();
+    }, 0);
   };
 
   const changeOrderSta = async (id, status) => {
@@ -129,8 +174,97 @@ function Orders() {
           <main className="p-4">
             <div className="card">
               <div className="card-header">
-                <div className="d-flex gap-3 align-items-center justify-content-between">
-                  <h3 className="fw-semibold fs-5">Order Management</h3>
+                <div className="row gap-3 align-items-center ">
+                  <div className="col">
+                    <h3 className="fw-semibold fs-5">Order Management</h3>
+                  </div>
+                  <div className="col-auto">
+                    <div className="row">
+                      <div className="col-auto px-1">
+                        <input
+                          className="form-control"
+                          type="search"
+                          placeholder="Search"
+                          value={search}
+                          onChange={(e) => setSearch(e.target.value)}
+                        />
+                      </div>
+                      <div className="col-auto px-1">
+                        <select
+                          className="form-control form-select-small
+                     w-auto"
+                          onChange={(e) => setFilter(e.target.value)}
+                          value={filter}
+                        >
+                          <option value="" hidden>
+                            Filter:-
+                          </option>
+                          <option value="">All</option>
+                          <option value="Pending">Pending</option>
+                          <option value="Preparing">Preparing</option>
+                          <option value="Out for Delivery">
+                            Out for Delivery
+                          </option>
+                          <option value="Delivered">Delivered</option>
+                          <option value="Cancelled">Cancelled</option>
+                        </select>
+                      </div>
+                      <div className="col-auto position-relative px-1">
+                        <button
+                          className="btn btn-sm btn-light"
+                          style={{ height: "40px" }}
+                          onClick={() => setShowDatePicker(!showDatePicker)}
+                        >
+                          {!dateRange[0].startDate && !dateRange[0].endDate
+                            ? "Select Date Range"
+                            : `${format(
+                                dateRange[0].startDate,
+                                "MM/dd/yyyy"
+                              )} - ${format(
+                                dateRange[0].endDate,
+                                "MM/dd/yyyy"
+                              )}`}
+                        </button>
+                        {showDatePicker && (
+                          <div
+                            className="position-absolute end-0 z-3 mt-1"
+                            ref={datePickerRef}
+                          >
+                            <DateRangePicker
+                              onChange={handleDateSelect}
+                              showSelectionPreview={true}
+                              moveRangeOnFirstSelection={false}
+                              months={2}
+                              ranges={dateRange}
+                              direction="horizontal"
+                              rangeColors={["#e46a15"]}
+                              color="#e46a15"
+                            />
+                            <div className="d-flex justify-content-end mt-2 gap-2">
+                              <button
+                                className="comman-btn-main white w-auto"
+                                onClick={handleClearDateRange}
+                                style={{ height: "40px" }}
+                              >
+                                Clear
+                              </button>
+                              <button
+                                className="btn comman-btn-main w-auto"
+                                style={{ height: "40px" }}
+                                onClick={handleApplyDateRange}
+                                disabled={
+                                  !dateRange[0].startDate ||
+                                  !dateRange[0].endDate
+                                }
+                              >
+                                Apply
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className="table-responsive shadow-sm rounded bg-white p-3">
@@ -436,7 +570,7 @@ function Orders() {
                     <strong>Total Amount:</strong> ₹{details?.amount}
                   </p>
                   <p>
-                    <strong>Payment Method:</strong> UPI
+                    <strong>Payment Method:</strong> COD
                   </p>
                   <p>
                     <strong>Status:</strong> {details?.status}
@@ -446,7 +580,7 @@ function Orders() {
                     {moment(details.createdAt).format("DD MMM YYYY, hh:mm A")}
                   </p>
                   <p>
-                    <strong>Expected Delivery:</strong> 1 hour
+                    <strong>Expected Delivery:</strong> 30 Minutes
                   </p>
                 </div>
               </div>

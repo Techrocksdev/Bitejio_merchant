@@ -159,6 +159,13 @@
   background-color: var(--border-light);
   line-height: 50px !important;
 }
+.form-control,
+.form-select-small {
+  padding: 0 12px;
+  height: 40px !important;
+  background-color: var(--border-light);
+  line-height: 40px !important;
+}
 
 .upload-img {
   border: 2px dashed var(--border-light);

@@ -415,7 +415,7 @@ function Dashboard() {
                     <strong>Total Amount:</strong> ₹{details?.amount}
                   </p>
                   <p>
-                    <strong>Payment Method:</strong> UPI
+                    <strong>Payment Method:</strong> COD
                   </p>
                   <p>
                     <strong>Status:</strong> {details?.status}
@@ -425,7 +425,7 @@ function Dashboard() {
                     {moment(details.createdAt).format("DD MMM YYYY, hh:mm A")}
                   </p>
                   <p>
-                    <strong>Expected Delivery:</strong> 1 hour
+                    <strong>Expected Delivery:</strong> 30 Minutes
                   </p>
                 </div>
               </div>
