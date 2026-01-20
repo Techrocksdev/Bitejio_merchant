@@ -219,10 +219,10 @@ function Orders() {
                             ? "Select Date Range"
                             : `${format(
                                 dateRange[0].startDate,
-                                "MM/dd/yyyy"
+                                "MM/dd/yyyy",
                               )} - ${format(
                                 dateRange[0].endDate,
-                                "MM/dd/yyyy"
+                                "MM/dd/yyyy",
                               )}`}
                         </button>
                         {showDatePicker && (
@@ -328,7 +328,7 @@ function Orders() {
                                 </span>
                               ))}
                           </td>
-                          <td>₹{item.amount}</td>
+                          <td>₹{item.pendingPayment + 35}</td>
                           <td>
                             <select
                               value={item.status}
@@ -359,7 +359,7 @@ function Orders() {
                           </td>
                           <td>
                             {moment(item.createdAt).format(
-                              "DD MMM YYYY, hh:mm A"
+                              "DD MMM YYYY, hh:mm A",
                             )}
                           </td>
                           <td className="text-center">
@@ -459,7 +459,7 @@ function Orders() {
                                   </button>
                                 </li>
                               </>
-                            )
+                            ),
                           )}
                         <li className="page-item">
                           <button
@@ -520,7 +520,7 @@ function Orders() {
                     <strong>Address:</strong>{" "}
                     <a
                       href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                        `${details?.address?.address_line2} ${details?.address?.address_line1}`
+                        `${details?.address?.address_line2} ${details?.address?.address_line1}`,
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -551,7 +551,7 @@ function Orders() {
                   </p>
                 </div>
                 {/* Order Details */}
-                <div className="col-12">
+                <div className="col-md-6">
                   <h6 className="fw-bold text-main mb-2">Order Information</h6>
                   <p>
                     <strong>Order ID:</strong> #{details?.orderId}
@@ -567,7 +567,8 @@ function Orders() {
                       ))}
                   </p>
                   <p>
-                    <strong>Total Amount:</strong> ₹{details?.amount}
+                    <strong>Total Amount:</strong> ₹
+                    {details?.pendingPayment + 35}
                   </p>
                   <p>
                     <strong>Payment Method:</strong> COD
@@ -581,6 +582,25 @@ function Orders() {
                   </p>
                   <p>
                     <strong>Expected Delivery:</strong> 30 Minutes
+                  </p>
+                </div>
+                <div className="col-md-6">
+                  <h6 className="fw-bold text-main mb-2">
+                    Delivery Boy Details
+                  </h6>
+                  <p>
+                    <strong>Name:</strong> {details?.deliveryBoyId?.firstName}{" "}
+                    {details?.deliveryBoyId?.lastName}
+                  </p>
+                  <p>
+                    <strong>Email:</strong> {details?.deliveryBoyId?.email}
+                  </p>
+                  <p>
+                    <strong>Contact:</strong>{" "}
+                    {details?.deliveryBoyId?.phoneNumber}
+                  </p>
+                  <p>
+                    <strong>Address:</strong> {details?.deliveryBoyId?.address}
                   </p>
                 </div>
               </div>
