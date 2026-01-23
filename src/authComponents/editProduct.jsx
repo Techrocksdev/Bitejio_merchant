@@ -51,7 +51,7 @@ function AddProduct() {
     onError: (error) => {
       console.log(error);
     },
-    select: (data) => data.results.product[0],
+    select: (data) => data.results.product,
   });
 
   // useEffect(() => {
@@ -180,7 +180,7 @@ function AddProduct() {
     if (results?.name_en && results?.variants?.length && attist?.length) {
       const attributeIds = results.variants
         .flatMap((variant) =>
-          variant.combination?.map((comb) => comb.attributeId?._id)
+          variant.combination?.map((comb) => comb.attributeId?._id),
         )
         .filter((id) => id && id !== undefined)
         .filter((id, index, self) => self.indexOf(id) === index);
@@ -200,7 +200,7 @@ function AddProduct() {
     ) {
       const valueIds = results.variants
         .flatMap((variant) =>
-          variant.combination?.map((comb) => comb.valueId?._id)
+          variant.combination?.map((comb) => comb.valueId?._id),
         )
         .filter((id) => id && id !== undefined)
         .filter((id, index, self) => self.indexOf(id) === index);
@@ -269,12 +269,12 @@ function AddProduct() {
 
     const invalidVariations = combination.flatMap((group) =>
       group.filter(
-        (item) => !item.quantity || !item.price || !item.discountPrice
-      )
+        (item) => !item.quantity || !item.price || !item.discountPrice,
+      ),
     );
 
     const invalidDiscount = combination.flatMap((group) =>
-      group.filter((item) => Number(item.discountPrice) > Number(item.price))
+      group.filter((item) => Number(item.discountPrice) > Number(item.price)),
     );
 
     if (invalidDiscount.length > 0) {
@@ -284,7 +284,7 @@ function AddProduct() {
     if (invalidVariations.length > 0) {
       showGlobalAlert(
         "Please fill all required fields for variations",
-        "error"
+        "error",
       );
       return;
     }
@@ -364,7 +364,7 @@ function AddProduct() {
     if (hasError) {
       showGlobalAlert(
         "Some files exceed 5MB limit and were not added",
-        "error"
+        "error",
       );
     }
 
@@ -456,7 +456,7 @@ function AddProduct() {
                                 className="fas fa-remove"
                                 onClick={() => {
                                   const updatedImages = existingImages.filter(
-                                    (_, i) => i !== index
+                                    (_, i) => i !== index,
                                   );
                                   setExistingImages(updatedImages);
                                 }}
@@ -674,13 +674,13 @@ function AddProduct() {
                                   classNamePrefix="react-select"
                                   onChange={(selected) =>
                                     field.onChange(
-                                      selected?.map((item) => item.value) || []
+                                      selected?.map((item) => item.value) || [],
                                     )
                                   }
                                   value={
                                     attist
                                       ?.filter((item) =>
-                                        field.value?.includes(item._id)
+                                        field.value?.includes(item._id),
                                       )
                                       .map((item) => ({
                                         value: item._id,
@@ -718,13 +718,13 @@ function AddProduct() {
                                   classNamePrefix="react-select"
                                   onChange={(selected) =>
                                     field.onChange(
-                                      selected?.map((item) => item.value) || []
+                                      selected?.map((item) => item.value) || [],
                                     )
                                   }
                                   value={
                                     valueList
                                       ?.filter((item) =>
-                                        field.value?.includes(item._id)
+                                        field.value?.includes(item._id),
                                       )
                                       .map((item) => ({
                                         value: item._id,
@@ -796,7 +796,7 @@ function AddProduct() {
                                                       index2
                                                     ].price = e.target.value;
                                                     setCombination(
-                                                      updatedCombinations
+                                                      updatedCombinations,
                                                     );
                                                   }}
                                                 />
@@ -816,7 +816,7 @@ function AddProduct() {
                                                     ].discountPrice =
                                                       e.target.value;
                                                     setCombination(
-                                                      updatedCombinations
+                                                      updatedCombinations,
                                                     );
                                                   }}
                                                 />
@@ -840,7 +840,7 @@ function AddProduct() {
                                                       index2
                                                     ].quantity = e.target.value;
                                                     setCombination(
-                                                      updatedCombinations
+                                                      updatedCombinations,
                                                     );
                                                   }}
                                                 />
@@ -858,10 +858,10 @@ function AddProduct() {
                                                     ] = updatedCombinations[
                                                       index1
                                                     ].filter(
-                                                      (_, i) => i !== index2
+                                                      (_, i) => i !== index2,
                                                     );
                                                     setCombination(
-                                                      updatedCombinations
+                                                      updatedCombinations,
                                                     );
                                                   }}
                                                 >
@@ -869,7 +869,7 @@ function AddProduct() {
                                                 </button>
                                               </td>
                                             </tr>
-                                          ))
+                                          )),
                                         )}
                                       </tbody>
                                     </table>

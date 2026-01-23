@@ -184,7 +184,7 @@ function Orders() {
                         <input
                           className="form-control"
                           type="search"
-                          placeholder="Search"
+                          placeholder="Search by Order ID, Customer, Merchant"
                           value={search}
                           onChange={(e) => setSearch(e.target.value)}
                         />

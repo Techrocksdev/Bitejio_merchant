@@ -23,7 +23,7 @@ function ForgotPassword() {
 
       if (!response.error) {
         navigate(`/verification?email=${btoa(data.email)}`);
-        showGlobalAlert(`Your OTP is: ${response.results.otp}`, "success");
+        showGlobalAlert(response.message, "success");
       } else {
         showGlobalAlert(response.message, "error");
       }

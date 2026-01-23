@@ -75,7 +75,7 @@ function Verification() {
     try {
       const response = await forgotPassword(formData);
       if (!response.error) {
-        showGlobalAlert(`Your OTP is: ${response.results.otp}`, "success");
+        showGlobalAlert(response.message, "success");
       } else {
         showGlobalAlert(response.message, "error");
       }
@@ -90,7 +90,7 @@ function Verification() {
       <div className="card shadow p-4 border-0 login-card">
         <h3 className="text-center mb-3 text-main fw-bold">Verify OTP</h3>
         <p className="text-center text mb-4">
-          Enter the 6-digit OTP sent to your email.
+          Enter the OTP Sent to Your Mobile Number.
         </p>
 
         <form onSubmit={handleSubmit(onSubmit)} className="text-center">
@@ -107,7 +107,7 @@ function Verification() {
                 moveOnMax(
                   event,
                   document.getElementById("otp1"),
-                  document.getElementById("otp2")
+                  document.getElementById("otp2"),
                 );
               }}
               onInput={(e) => {
@@ -129,7 +129,7 @@ function Verification() {
                   event,
                   document.getElementById("otp2"),
                   document.getElementById("otp3"),
-                  document.getElementById("otp1")
+                  document.getElementById("otp1"),
                 );
               }}
               onInput={(e) => {
@@ -151,7 +151,7 @@ function Verification() {
                   event,
                   document.getElementById("otp3"),
                   document.getElementById("otp4"),
-                  document.getElementById("otp2")
+                  document.getElementById("otp2"),
                 );
               }}
               onInput={(e) => {
@@ -173,7 +173,7 @@ function Verification() {
                   event,
                   document.getElementById("otp4"),
                   document.getElementById("otp5"),
-                  document.getElementById("otp3")
+                  document.getElementById("otp3"),
                 );
               }}
               onInput={(e) => {

@@ -24,7 +24,7 @@ function ProductDetails() {
     onError: (error) => {
       console.log(error);
     },
-    select: (data) => data.results.product[0],
+    select: (data) => data.results.product,
   });
 
   const SampleNextArrow = (props) => {
