@@ -584,28 +584,45 @@ function Orders() {
                     <strong>Expected Delivery:</strong> 30 Minutes
                   </p>
                 </div>
+
                 <div className="col-md-6">
-                  <h6 className="fw-bold text-main mb-2">
-                    Delivery Boy Details
-                  </h6>
-                  <p>
-                    <strong>Name:</strong> {details?.deliveryBoyId?.firstName}{" "}
-                    {details?.deliveryBoyId?.lastName}
-                  </p>
-                  <p>
-                    <strong>Email:</strong> {details?.deliveryBoyId?.email}
-                  </p>
-                  <p>
-                    <strong>Contact:</strong>{" "}
-                    {details?.deliveryBoyId?.phoneNumber}
-                  </p>
-                  <p>
-                    <strong>Address:</strong> {details?.deliveryBoyId?.address}
-                  </p>
+                  {details?.deliveryBoyId?.firstName ? (
+                    <>
+                      <h6 className="fw-bold text-main mb-2">
+                        Delivery Boy Details
+                      </h6>
+                      <p>
+                        <strong>Name:</strong>{" "}
+                        {details?.deliveryBoyId?.firstName}{" "}
+                        {details?.deliveryBoyId?.lastName}
+                      </p>
+                      <p>
+                        <strong>Email:</strong> {details?.deliveryBoyId?.email}
+                      </p>
+                      <p>
+                        <strong>Contact:</strong>{" "}
+                        {details?.deliveryBoyId?.phoneNumber}
+                      </p>
+                      <p>
+                        <strong>Address:</strong>{" "}
+                        {details?.deliveryBoyId?.address}
+                      </p>
+                    </>
+                  ) : (
+                    ""
+                  )}
                 </div>
               </div>
             </div>
             <div className="modal-footer">
+              <a
+                href={details?.invoice}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="comman-btn-main btn w-auto"
+              >
+                Download Invoice
+              </a>
               <button
                 className="btn comman-btn-main"
                 onClick={() => setDetails({})}

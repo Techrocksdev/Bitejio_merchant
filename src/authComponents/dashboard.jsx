@@ -297,7 +297,7 @@ function Dashboard() {
                               </td>
                               <td>
                                 {moment(item.createdAt).format(
-                                  "DD MMM YYYY, hh:mm A"
+                                  "DD MMM YYYY, hh:mm A",
                                 )}
                               </td>
                               <td className="text-center">
@@ -365,7 +365,7 @@ function Dashboard() {
                     <strong>Address:</strong>{" "}
                     <a
                       href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                        `${details?.address?.address_line2} ${details?.address?.address_line1}`
+                        `${details?.address?.address_line2} ${details?.address?.address_line1}`,
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -428,9 +428,41 @@ function Dashboard() {
                     <strong>Expected Delivery:</strong> 30 Minutes
                   </p>
                 </div>
+                {details?.deliveryBoyId?.firstName ? (
+                  <div className="col-md-6">
+                    <h6 className="fw-bold text-main mb-2">
+                      Delivery Boy Details
+                    </h6>
+                    <p>
+                      <strong>Name:</strong> {details?.deliveryBoyId?.firstName}{" "}
+                      {details?.deliveryBoyId?.lastName}
+                    </p>
+                    <p>
+                      <strong>Email:</strong> {details?.deliveryBoyId?.email}
+                    </p>
+                    <p>
+                      <strong>Contact:</strong>{" "}
+                      {details?.deliveryBoyId?.phoneNumber}
+                    </p>
+                    <p>
+                      <strong>Address:</strong>{" "}
+                      {details?.deliveryBoyId?.address}
+                    </p>
+                  </div>
+                ) : (
+                  ""
+                )}
               </div>
             </div>
             <div className="modal-footer">
+              <a
+                href={details?.invoice}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="comman-btn-main btn w-auto"
+              >
+                Download Invoice
+              </a>
               <button
                 className="btn comman-btn-main"
                 onClick={() => setDetails({})}
